@@ -15,8 +15,8 @@ class ChatSystemServiceProvider extends ServiceProvider
     {
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'myckhel');
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'myckhel');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadRoutesFrom(__DIR__.'/routes.php');
 
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
@@ -61,10 +61,27 @@ class ChatSystemServiceProvider extends ServiceProvider
             __DIR__.'/../config/chatsystem.php' => config_path('chatsystem.php'),
         ], 'chatsystem.config');
 
+        // Publishing the configuration file.
+        if (! class_exists('CreateConversationsTable')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/2021_03_08_192416_create_conversations_table.php' => database_path('migrations/'.date('Y_m_d_His', time()).'_create_conversations_table.php'),
+            ], 'migrations');
+        }
+
         // Publishing the views.
         /*$this->publishes([
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/myckhel'),
         ], 'chatsystem.views');*/
+
+        // Publishing the seeders.
+        $this->publishes([
+            __DIR__.'/../database/seeders' => database_path('seeders'),
+        ], 'seeders');
+
+        // Publishing the factories.
+        $this->publishes([
+            __DIR__.'/../database/factories' => database_path('factories'),
+        ], 'factories');
 
         // Publishing assets.
         /*$this->publishes([
