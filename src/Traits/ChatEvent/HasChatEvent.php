@@ -4,7 +4,6 @@ namespace Myckhel\ChatSystem\Traits\ChatEvent;
 use Myckhel\ChatSystem\Models\Message;
 use Myckhel\ChatSystem\Models\ChatEvent;
 use Myckhel\ChatSystem\Models\Conversation;
-use DB;
 /**
  *
  */
