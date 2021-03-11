@@ -6,7 +6,7 @@
         {
             "name": "myckhel",
             "email": "myckhel1@hotmail.com",
-            "homepage": "myckhel.com"
+            "homepage": "https://myckhel.com"
         }
     ],
     "homepage": "https://github.com/myckhel/laravel-chat-system",
@@ -15,6 +15,12 @@
         "php": "^7.4|^8.0",
         "illuminate/support": "~7|~8",
         "nesbot/carbon": "^2.36.0"
+    },
+    "scripts": {
+      "test": "vendor/bin/phpunit",
+      "post-autoload-dump": [
+        "@php vendor/bin/testbench package:discover --ansi"
+      ]
     },
     "require-dev": {
         "fakerphp/faker": "^1.12",

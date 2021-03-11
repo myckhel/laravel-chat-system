@@ -14,7 +14,7 @@ class CreateConversationsTable extends Migration
     public function up()
     {
       Schema::create('conversations', function (Blueprint $table) {
-          $userModel  = config('chatsystem.user_model');
+          $userModel  = config('chat-system.user_model');
           $user_table = (new $userModel)->getTable();
 
           $table->id();

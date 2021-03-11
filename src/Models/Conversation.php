@@ -8,13 +8,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Myckhel\ChatSystem\Jobs\Chat\MakeEvent;
 use Carbon\Carbon;
 use Myckhel\ChatSystem\Database\Factories\ConversationFactory;
+use Myckhel\ChatSystem\Traits\ChatEvent\HasChatEvent;
 
 class Conversation extends Model
 {
-  use HasFactory;
-  public $cacheFor = 604800;
-  protected static $flushCacheOnUpdate = true;
-  protected $fillable = ['user_id'];
+  use HasFactory, HasChatEvent;
+  protected $fillable = ['user_id', 'name'];
   protected $casts    = ['user_id' => 'int'];
   protected $hidden   = ['pivot'];
 
@@ -43,14 +42,12 @@ class Conversation extends Model
       'type'       => $type,
     ];
 
-    // EXTRA
-    // if all participants deleted messages
-    // then delete all messages
-
-    return $row ? $user->chatEventMakers()->create($create)
-    : $user->chatEventMakers()->updateOrCreate(
-      $create, array_merge($create, ['created_at' => now()])
-    );
+    return $row
+      ? $user->chatEventMakers()->create($create)
+      : $user->chatEventMakers()->updateOrCreate(
+          $create,
+          array_merge($create, ['created_at' => now()])
+        );
   }
 
   public function last_message(){
@@ -109,7 +106,7 @@ class Conversation extends Model
   }
 
   public function author(){
-    return $this->belongsTo(config('chatsystem.user_model'), 'user_id');
+    return $this->belongsTo(config('chat-system.user_model'), 'user_id');
   }
 
   public function newCollection(array $models = Array()){

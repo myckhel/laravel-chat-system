@@ -140,7 +140,7 @@ class Message extends Model
     // }
 
     public function sender(){
-      return $this->belongsTo(config('chatsystem.user_model'), 'user_id');
+      return $this->belongsTo(config('chat-system.user_model'), 'user_id');
     }
 
     public function reply(): MorphTo {

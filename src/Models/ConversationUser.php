@@ -18,7 +18,7 @@ class ConversationUser extends Model
     }
 
     function user() {
-      return $this->belongsTo(config('chatsystem.user_model'));
+      return $this->belongsTo(config('chat-system.user_model'));
     }
     function conversation() {
       return $this->belongsTo(Conversation::class);

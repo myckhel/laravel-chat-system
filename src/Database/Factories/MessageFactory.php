@@ -39,7 +39,7 @@ class MessageFactory extends Factory
                 $q->whereNotParticipant($message->user_id)->with('participant')
               ])->conversation->participant->user_id,
             ]),
-            'maker_type'   => "App\\User",
+            'maker_type'   => config('chat-system.user_model'),
           ]);
         } catch (\Exception $e) {}
       });
