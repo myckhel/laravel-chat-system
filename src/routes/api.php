@@ -21,6 +21,7 @@ $prefix       = config('chat-system.route.prefix');
 
 Route::group(['prefix' => $prefix, 'middleware' => $middlewares], function(){
   Route::get('conversations/count', [ConversationController::class, 'count']);
+  Route::delete('messages',         [MessageController::class, 'delete']);
   Route::apiResources([
     'conversations'         =>  ConversationController::class,
     'messages'              =>  MessageController::class,

@@ -22,6 +22,15 @@ class Message extends Model
     protected $appends  = ['isSender'];
     protected $hidden   = ['media'];
 
+    function scopeWhereReply($q, $reply) {
+      $q->when($reply['reply_id'] ?? null,
+        fn ($q) => $q->whereReplyId($reply['reply_id'])
+      )->when(
+        $reply['reply_type'] ?? null,
+        fn ($q) => $q->whereReplyType($reply['reply_type'])
+      );
+    }
+
     protected static function newFactory(){
       return MessageFactory::new();
     }
@@ -76,23 +85,16 @@ class Message extends Model
     }
 
     function makeDelete($user, $all = false) {
-
       return $this->makeChatEvent($user, 'delete', $all);
     }
 
-
-    //Returns true  when other user has deleted specific message
-
-    function participantDeleted(){
-      $countOtherUsers = $this->conversation->participants()->count();
-      $countDeleteEvents = ChatEvent::whereMadeId($this->id)->whereType('delete')->whereMadeType('App\Models\Message')->count();
-      if($countDeleteEvents==$countOtherUsers-1){
-          return true;
-      }
-      return false;
+    function participantsHasDeleted(){
+      [$participantsCount, $deleteEventsCount] = [
+        $this->conversation->participants()->count(),
+        $this->chatEvents(false)->whereType('delete')->count()
+      ];
+      return $deleteEventsCount == $participantsCount-1;
     }
-
-    // function scope
 
     function makeRead($user) {
       return $this->makeChatEvent($user, 'read');
@@ -130,9 +132,10 @@ class Message extends Model
       return $this->belongsTo(Conversation::class);
     }
 
-    function chatEvents(){
-      return $this->hasManyThrough(ChatEvent::class, Conversation::class, 'id', 'made_id', 'conversation_id')
-      ->whereMadeType(Conversation::class)->distinct('type')->latest();
+    function chatEvents(Bool $distinctType = true){
+      return $this->morphMany(ChatEvent::class, 'made')
+      ->when($distinctType, fn ($q) => $q->distinct('type'))
+      ->latest();
     }
 
     // function latestMedia(){
@@ -166,6 +169,12 @@ class Message extends Model
 class MessageCollection extends Collection {
   function prependSystemMessage(...$messages) {
     array_map(fn ($message) => $this->prepend($message), $messages);
+
+    return $this;
+  }
+
+  function appendSystemMessage(...$messages) {
+    array_map(fn ($message) => $this->push($message), $messages);
 
     return $this;
   }
