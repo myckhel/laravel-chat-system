@@ -82,7 +82,7 @@ class Conversation extends Model
   public function unread($user = null){
     $user_id = $user->id ?? $user ?? auth()->user()->id;
 
-    return $this->notMsgEvents('read', $user_id)->where('user_id', '!=', $user_id);
+    return $this->notMsgEvents('read', $user_id)->latest()->whereNotSender($user_id);
   }
 
   function notMsgEvents($type = null, $user = null) {
@@ -91,7 +91,7 @@ class Conversation extends Model
     return $this->messages()
     ->whereHas('conversation', fn ($q) =>
       $q->whereDoesntHave('chatEvents', fn ($q) =>
-        $q->whereMakerId($user_id)
+        $q->latest()->whereMakerId($user_id)
         ->when($type, fn ($q) => $q->whereType($type))
         ->whereColumn('created_at', '>', 'messages.created_at')
       )

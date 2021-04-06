@@ -11,16 +11,22 @@ use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
 use Myckhel\ChatSystem\Traits\ChatEvent\HasChatEvent;
 use Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent;
+use Myckhel\ChatSystem\Traits\HasMeta;
 use Myckhel\ChatSystem\Database\Factories\MessageFactory;
 
 class Message extends Model
 {
-    use HasFactory, HasChatEvent;
+    use HasFactory, HasChatEvent, HasMeta;
     protected $fillable = ['conversation_id', 'user_id', 'reply_id', 'reply_type', 'message'];
     protected $casts    = ['conversation_id' => 'int', 'reply_id' => 'int', 'user_id' => 'int'];
     protected $searches = ['message'];
     protected $appends  = ['isSender'];
     protected $hidden   = ['media'];
+
+    function scopeWhereNotSender($q, $user = null) {
+      $user_id = $user->id ?? $user ?? auth()->user()->id;
+      $q->where('user_id', '!=', $user_id);
+    }
 
     function scopeWhereReply($q, $reply) {
       $q->when($reply['reply_id'] ?? null,

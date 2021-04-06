@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Myckhel\ChatSystem\Http\Requests\PaginableRequest;
 use Illuminate\Validation\Rule;
 use Myckhel\ChatSystem\Events\Message\Created;
-use Myckhel\ChatSystem\Notifications\Message\Created as CreatedMessage;
+// use Myckhel\ChatSystem\Notifications\Message\Created as CreatedMessage;
 
 class MessageController extends Controller
 {
@@ -59,7 +59,10 @@ class MessageController extends Controller
       // ->withUrls(['image', 'videos'])
       ->whereConversationWasntDeleted($user)
       ->with($with)->latest()
+      ->metas(['token'])
       ->paginate($request->pageSize);
+
+      $messages->map(fn ($msg) => $msg->metas->keyValue());
 
       // $messages->withUrls(['image', 'videos']);
 
@@ -163,11 +166,7 @@ class MessageController extends Controller
         // $message->saveImage($image, 'image');
         // $message->saveVideo($videos, 'videos');
 
-        broadcast(new Created(
-          $message,
-          $message->image,
-          $message->videos,
-        ));
+        broadcast(new Created($message));
 
         $token && $message->metas->keyValue();
         // $otherUser->notify(new CreatedMessage($message, $user));

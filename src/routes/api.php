@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Myckhel\ChatSystem\Http\Controllers\ConversationController;
 use Myckhel\ChatSystem\Http\Controllers\MessageController;
+use Myckhel\ChatSystem\Http\Controllers\ChatEventController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +26,7 @@ Route::group(['prefix' => $prefix, 'middleware' => $middlewares], function(){
   Route::apiResources([
     'conversations'         =>  ConversationController::class,
     'messages'              =>  MessageController::class,
-    // 'chat_events'           =>  ChatEventController::class,
+    'chat_events'           =>  ChatEventController::class,
   ]);
 
 });

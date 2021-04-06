@@ -13,21 +13,26 @@ class Created implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $broadcastQueue = 'chat';
-    public $message, $image, $videos;
+    public $message;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($message, $image = null, $videos = null){
+    public function __construct($message){
       $this->message = $message;
-      $this->image = $image;
-      $this->videos = $videos;
     }
 
     public function broadcastAs() {
       return 'message';
+    }
+
+    function broadcastWith() {
+      $this->message->metas->keyValue();
+      return [
+        'message' => $this->message,
+      ];
     }
 
     /**

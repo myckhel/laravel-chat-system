@@ -10,7 +10,7 @@ use Myckhel\ChatSystem\Jobs\Chat\MakeEvent;
  */
 trait HasMessage
 {
-  function messages($conversation = null, $otherUser = null, $reply = []){
+  function messages($conversation = null, $otherUser = null, Array $reply = []){
     if ($conversation || $otherUser) {
       $conversation = $this->conversations($conversation, $otherUser)->first();
       // if conversation doesnt exist and add participant
@@ -28,7 +28,8 @@ trait HasMessage
       MakeEvent::dispatch($this, 'read', $conversation)->afterResponse();
       return $conversation->messages()->whereReply($reply);
     } elseif ($reply) {
-      return Message::whereReply($reply);
+      return Message::whereReplyId($reply['reply_id'])
+      ->whereReplyType($reply['reply_type']);
     } else {
       $conversation_ids = $this->conversations()->pluck('conversations.id');
       return $this->hasMany(Message::class)
