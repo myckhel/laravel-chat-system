@@ -23,6 +23,7 @@
       ]
     },
     "require-dev": {
+        "php": "^8",
         "fakerphp/faker": "^1.12",
         "phpunit/phpunit": "~9.0",
         "orchestra/testbench": "~5|~6"
