@@ -135,7 +135,7 @@ class Message extends Model
     }
 
     public function conversation(){
-      return $this->belongsTo(Conversation::class);
+      return $this->belongsTo(config('chat-system.models.conversation'));
     }
 
     function chatEvents(Bool $distinctType = true){
