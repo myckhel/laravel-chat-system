@@ -16,11 +16,12 @@ class ConversationSeeder extends Seeder
      */
     public function run()
     {
-      $userModel  = config('chat-system.user_model');
+      $userModel  = config('chat-system.models.user');
+      $conversationModel  = config('chat-system.models.conversation');
       $user_key = (new $userModel)->getKeyName();
       $faker = Faker::create();
       $users = $userModel::pluck($user_key)->toArray();
-      Conversation::factory()->count($faker->numberBetween(min(100, count($users)), count($users)))
+      $conversationModel::factory()->count($faker->numberBetween(min(100, count($users)), count($users)))
       ->hasParticipants($faker->numberBetween(2, 4), fn ($attributes, $conversation) =>
         [
           'user_id' => $faker->randomElement($users),

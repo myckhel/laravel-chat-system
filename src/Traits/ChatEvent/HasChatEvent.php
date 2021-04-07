@@ -1,8 +1,6 @@
 <?php
 namespace Myckhel\ChatSystem\Traits\ChatEvent;
 
-use Myckhel\ChatSystem\Models\Message;
-use Myckhel\ChatSystem\Models\ChatEvent;
 use Myckhel\ChatSystem\Models\Conversation;
 /**
  *
@@ -13,15 +11,15 @@ trait HasChatEvent
     $q->whereDoesntHave('trashed', fn ($q) => $q->where('all', true)->orWhere('maker_id', $maker_id));
   }
   function chatEvents(){
-    return $this->morphMany(ChatEvent::class, 'made')
+    return $this->morphMany(config('chat-system.models.chat_event'), 'made')
     ->groupByRaw('`type` desc')
     ->orderBy('id', 'desc');
   }
   function chatEvent(){
-    return $this->morphOne(ChatEvent::class, 'made')->latest();
+    return $this->morphOne(config('chat-system.models.chat_event'), 'made')->latest();
   }
   function delivery($maker = null) {
-    return $this->morphOne(ChatEvent::class, 'made')
+    return $this->morphOne(config('chat-system.models.chat_event'), 'made')
     ->whereType('deliver')->latest()
     ->when(
       $maker,
@@ -29,11 +27,11 @@ trait HasChatEvent
     );
   }
   function trashed() {
-    return $this->morphOne(ChatEvent::class, 'made')
+    return $this->morphOne(config('chat-system.models.chat_event'), 'made')
     ->whereType('delete')->latest();
   }
   function read() {
-    return $this->morphOne(ChatEvent::class, 'made')
+    return $this->morphOne(config('chat-system.models.chat_event'), 'made')
     ->whereType('read')->latest();
   }
 
@@ -44,7 +42,7 @@ trait HasChatEvent
               return;
           }
       }
-     ChatEvent::whereMadeType(get_class($model))->whereMadeId($model->id)->delete();
+     config('chat-system.models.chat_event')::whereMadeType(get_class($model))->whereMadeId($model->id)->delete();
     });
 
   }

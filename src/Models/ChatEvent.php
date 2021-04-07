@@ -26,10 +26,12 @@ class ChatEvent extends Model
       $q->whereDoesntHave('message', fn($q) => $q->whereUserId($userId));
     }
     function message() {
-      return $this->belongsTo(Message::class, 'made_id')->whereMadeType(Message::class);
+      $message = config('chat-system.models.message');
+      return $this->belongsTo($message, 'made_id')->whereMadeType($message);
     }
     function conversation() {
-      return $this->belongsTo(Conversation::class, 'made_id')->whereMadeType(Conversation::class);
+      $conversation = config('chat-system.models.message');
+      return $this->belongsTo($conversation, 'made_id')->whereMadeType($conversation);
     }
 
     function scopeWithMakerEvents($q, $maker = null) {

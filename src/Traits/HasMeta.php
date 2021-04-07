@@ -35,7 +35,7 @@ trait HasMeta
   }
 
   public function metas(){
-    return $this->morphMany(Meta::class, 'metable');
+    return $this->morphMany(config('chat-system.models.meta'), 'metable');
   }
 
   public function scopeMetas($stmt, $metas = []){

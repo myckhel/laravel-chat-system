@@ -41,7 +41,7 @@ class MakeEvent implements ShouldQueue
         }
       } else {
         // get unread msg for conversations
-        $undelivered = Message::with('conversation')
+        $undelivered = config('chat-system.models.message')::with('conversation')
         ->notMsgEvents('deliver', $this->user->id, fn ($q) =>
           $q->whereIn('id', $conversation->pluck('id'))
         )->where('user_id', '!=', $this->user->id)->get();

@@ -29,7 +29,7 @@ class MessageController extends Controller
         'reply_id'           => 'int',
         'reply_type'         => [
           Rule::requiredIf(fn () => $request->reply_id),
-          "in:".Message::class,
+          "in:".config('chat-system.models.message'),
         ],
       ]);
 
@@ -68,15 +68,16 @@ class MessageController extends Controller
 
       if ($system && $messages->currentPage() == $messages->lastPage()) {
         $msg = $messages->first();
+        $msgClass = config('chat-system.models.message');
         $conversation_id = $msg ? $msg->conversation_id : $request->conversation_id ?? $user->conversations()->latest()->first()->id ?? null;
-        $systemSafe = new Message([
+        $systemSafe = new $msgClass([
           'conversation_id' => $conversation_id,
           'message' => trans('msg.chat.system.safety'),
         ]);
         $systemSafe->setAppends(['system']);
         $systemSafe->id = 1;
 
-        $systemDesc = new Message([
+        $systemDesc = new $msgClass([
           'conversation_id' => $conversation_id,
           'message' => trans('msg.chat.system.msg_desc'),
         ]);
@@ -114,7 +115,7 @@ class MessageController extends Controller
         'reply_id'        => 'int',
         'reply_type'      => [
           Rule::requiredIf(fn () => $request->reply_id),
-          "in:".Message::class,
+          "in:".config('chat-system.models.message'),
         ],
         // 'videos.*'        => 'mimetypes:video/webm,video/mp,video/mp4,video/quicktime|max:40000',
       ]);
@@ -140,7 +141,7 @@ class MessageController extends Controller
       ->when(
         $token,
         fn ($q) => $q->whereHas('metas', fn ($q) =>
-          $q->whereMetableType(Message::class)
+          $q->whereMetableType(config('chat-system.models.message'))
           ->whereName('token')->whereValue($token)
         ),
         fn ($q) => $q->whereNull('id')
@@ -154,7 +155,7 @@ class MessageController extends Controller
         ]
       );
       $message->loadMorph('reply', [
-          Message::class => ['reply'],
+          config('chat-system.models.message') => ['reply'],
       ]);
 
       if ($message->wasRecentlyCreated) {
@@ -181,20 +182,10 @@ class MessageController extends Controller
      * @param  \Myckhel\ChatSystem\Models\Message  $message
      * @return \Illuminate\Http\Response
      */
-    public function show(Message $message)
+    public function show($message)
     {
+      $message = config('chat-system.models.message')::findOrFail($message);
       return $message;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \Myckhel\ChatSystem\Models\Message  $message
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Message $message)
-    {
-        //
     }
 
     /**

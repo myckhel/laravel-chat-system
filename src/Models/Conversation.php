@@ -106,7 +106,7 @@ class Conversation extends Model
   }
 
   public function author(){
-    return $this->belongsTo(config('chat-system.user_model'), 'user_id');
+    return $this->belongsTo(config('chat-system.models.user'), 'user_id');
   }
 
   public function newCollection(array $models = Array()){

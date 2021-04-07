@@ -2,8 +2,6 @@
 
 namespace Myckhel\ChatSystem;
 use Illuminate\Support\Facades\Gate;
-use Myckhel\ChatSystem\Models\ChatEvent;
-use Myckhel\ChatSystem\Models\Conversation;
 use Myckhel\ChatSystem\Observers\ChatEventObserver;
 use Myckhel\ChatSystem\Observers\ConversationObserver;
 
@@ -21,8 +19,8 @@ class ChatSystem
   }
 
   static function registerObservers() {
-    ChatEvent::observe(ChatEventObserver::class);
-    Conversation::observe(ConversationObserver::class);
+    config('chat-system.models.chat_event')::observe(ChatEventObserver::class);
+    config('chat-system.models.conversation')::observe(ConversationObserver::class);
   }
 
   static function registerBroadcastRoutes() {

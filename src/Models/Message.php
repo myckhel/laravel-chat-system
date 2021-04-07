@@ -129,7 +129,7 @@ class Message extends Model
 
     public function participants($user = null){
       $user_id = $user->id ?? $user ?? null;
-      return ConversationUser::whereHas('conversation', fn ($q) =>
+      return config('chat-system.models.conversation_user')::whereHas('conversation', fn ($q) =>
         $q->whereId($this->conversation_id)->whereHas('participants', fn ($q) => $q->when($user_id, fn ($q) => $q->whereUserId($user_id)))
       );
     }
@@ -139,7 +139,7 @@ class Message extends Model
     }
 
     function chatEvents(Bool $distinctType = true){
-      return $this->morphMany(ChatEvent::class, 'made')
+      return $this->morphMany(config('chat-system.models.chat_event'), 'made')
       ->when($distinctType, fn ($q) => $q->distinct('type'))
       ->latest();
     }
@@ -149,7 +149,7 @@ class Message extends Model
     // }
 
     public function sender(){
-      return $this->belongsTo(config('chat-system.user_model'), 'user_id');
+      return $this->belongsTo(config('chat-system.models.user'), 'user_id');
     }
 
     public function reply(): MorphTo {
