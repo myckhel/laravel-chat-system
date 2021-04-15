@@ -1,3 +1,6 @@
 [submodule "example"]
 	path = example
 	url = https://github.com/myckhel/chat-system-example.git
+[submodule "docs"]
+	path = docs
+	url = https://github.com/myckhel/laravel-chat-system-docs.git
