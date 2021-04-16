@@ -182,9 +182,8 @@ class MessageController extends Controller
      * @param  \Myckhel\ChatSystem\Models\Message  $message
      * @return \Illuminate\Http\Response
      */
-    public function show($message)
+    public function show(Message $message)
     {
-      $message = config('chat-system.models.message')::findOrFail($message);
       return $message;
     }
 

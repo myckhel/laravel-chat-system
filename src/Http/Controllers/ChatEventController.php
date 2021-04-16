@@ -4,6 +4,7 @@ namespace Myckhel\ChatSystem\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Myckhel\ChatSystem\Http\Requests\PaginableRequest;
+use Myckhel\ChatSystem\Models\ChatEvent;
 
 class ChatEventController extends Controller
 {
@@ -73,9 +74,8 @@ class ChatEventController extends Controller
      * @param  \Myckhel\ChatSystem\Models\ChatEvent  $chatEvent
      * @return \Illuminate\Http\Response
      */
-    public function show($chatEvent)
+    public function show(ChatEvent $chatEvent)
     {
-      $chatEvent = config('chat-system.models.chat_event')::findOrFail($chatEvent);
       $this->authorize('view', $chatEvent);
       return $chatEvent;
     }
@@ -87,9 +87,8 @@ class ChatEventController extends Controller
      * @param  \Myckhel\ChatSystem\Models\ChatEvent  $chatEvent
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $chatEvent)
+    public function update(Request $request, ChatEvent $chatEvent)
     {
-      $chatEvent = config('chat-system.models.chat_event')::findOrFail($chatEvent);
       $this->authorize('update', $chatEvent);
       $request->validate([]);
       $user     = $request->user();
@@ -103,9 +102,8 @@ class ChatEventController extends Controller
      * @param  \Myckhel\ChatSystem\Models\ChatEvent  $chatEvent
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $chatEvent)
+    public function destroy(Request $request, ChatEvent $chatEvent)
     {
-      $chatEvent = config('chat-system.models.chat_event')::findOrFail($chatEvent);
       $user     = $request->user();
       return ['status' =>
         $user->chatEventMakers($chatEvent)->firstOrFail()->delete()

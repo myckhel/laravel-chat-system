@@ -4,6 +4,7 @@ namespace Myckhel\ChatSystem\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Myckhel\ChatSystem\Http\Requests\PaginableRequest;
+use Myckhel\ChatSystem\Models\Conversation;
 use DB;
 
 class ConversationController extends Controller
@@ -87,9 +88,8 @@ class ConversationController extends Controller
      * @param  \Myckhel\ChatSystem\Models\Conversation  $conversation
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, $conversation)
+    public function show(Request $request, Conversation $conversation)
     {
-      $conversation = config('chat-system.models.conversation')::findOrFail($conversation);
       $this->authorize('view', $conversation);
       $user = $request->user();
 
@@ -109,9 +109,8 @@ class ConversationController extends Controller
      * @param  \Myckhel\ChatSystem\Models\Conversation  $conversation
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $conversation)
+    public function update(Request $request, Conversation $conversation)
     {
-      $conversation = config('chat-system.models.conversation')::findOrFail($conversation);
       $this->authorize('update', $conversation);
       $request->validate([]);
       $user     = $request->user();
@@ -125,9 +124,8 @@ class ConversationController extends Controller
      * @param  \Myckhel\ChatSystem\Models\Conversation  $conversation
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $conversation)
+    public function destroy(Request $request, Conversation $conversation)
     {
-      $conversation = config('chat-system.models.conversation')::findOrFail($conversation);
       $this->authorize('delete', $conversation);
       $user = $request->user();
       return ['status' => $conversation->makeDelete($user)];
