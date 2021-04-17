@@ -24,7 +24,7 @@ class MakeEvent implements ShouldQueue
       $this->user = $user;
       $this->type = $type;
       $this->conversation = $conversation;
-      $this->onQueue('chat-event');
+      $this->onQueue(config("chat-system.jobs.chat.make-event"));
     }
 
     /**

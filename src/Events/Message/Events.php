@@ -28,6 +28,7 @@ class Events implements ShouldBroadcast
         $this->conversation_id = $event->made->conversation->id;
         $event->unsetRelation('made');
       }
+      $this->broadcastQueue = config("chat-system.queues.events.message.events");
     }
 
     public function broadcastAs()
