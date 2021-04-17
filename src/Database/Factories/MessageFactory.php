@@ -32,7 +32,7 @@ class MessageFactory extends Factory
         try {
           ChatEvent::factory()->count($this->faker->numberBetween(0, 3))->create([
             'made_id'     => $message->id,
-            'made_type'   => get_class($message),
+            'made_type'   => $message::class,
             'maker_id'    => $this->faker->randomElement([
               $message->user_id,
               $message->load(['conversation' => fn ($q) =>

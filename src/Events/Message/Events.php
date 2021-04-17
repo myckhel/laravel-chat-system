@@ -24,7 +24,10 @@ class Events implements ShouldBroadcast
      */
     public function __construct($event){
       $this->event = $event;
-      if ($event->type == 'delete' && $event->made_type == Message::class) {
+      if (
+        $event->type == 'delete'
+        && $event->made_type == config('chat-system.models.message')
+      ) {
         $this->conversation_id = $event->made->conversation->id;
         $event->unsetRelation('made');
       }
@@ -45,7 +48,10 @@ class Events implements ShouldBroadcast
     {
       $event = $this->event;
       $conversation_id = $this->conversation_id;
-      if ($event->type == 'delete' && $event->made_type == Message::class) {
+      if (
+        $event->type == 'delete'
+        && $event->made_type == config('chat-system.models.message')
+      ) {
         if ($event->all) {
           return new PrivateChannel("message-event-created.{$conversation_id}");
         } else {
