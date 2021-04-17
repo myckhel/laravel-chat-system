@@ -7,15 +7,13 @@ abstract class TestCase extends Orchestra
 {
   public function setUp(): void
   {
-    $this->loadEnvironmentVariables();
+    // $this->loadEnvironmentVariables();
 
     parent::setUp();
 
-    $this->setUpDatabase($this->app);
+    // $this->setUpDatabase($this->app);
 
-    $this->setUpTempTestFiles();
-
-    $this->assertTrue(true);
+    // $this->setUpTempTestFiles();
     //
     // $this->testModel = TestModel::first();
     // $this->testUnsavedModel = new TestModel();
