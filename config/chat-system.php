@@ -1,6 +1,9 @@
 <?php
 
 return [
+  /*
+  * Models
+  */
   "models" => [
     "user"          => "App\\Models\\User",
     "conversation"  => "Myckhel\\ChatSystem\\Models\\Conversation",
@@ -9,8 +12,29 @@ return [
     "chat_event"    => "Myckhel\\ChatSystem\\Models\\ChatEvent",
     "meta"          => "Myckhel\\ChatSystem\\Models\\Meta",
   ],
+
+  /*
+  * Routes
+  */
   "route" => [
     "middlewares" => ['api'],
     "prefix" => 'api'
+  ],
+
+  /*
+  * Events Queues
+  */
+  "queues" => [
+    "events" => [
+      "message" => [
+        "created" => "chat",
+        "events" => "chat-event",
+      ],
+    ],
+    "jobs" => [
+      "chat" => [
+        "make-event" => "chat-event",
+      ],
+    ],
   ],
 ];

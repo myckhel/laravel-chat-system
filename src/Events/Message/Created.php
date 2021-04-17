@@ -22,6 +22,7 @@ class Created implements ShouldBroadcast
      */
     public function __construct($message){
       $this->message = $message;
+      $this->broadcastQueue = config("chat-system.queues.events.message.created");
     }
 
     public function broadcastAs() {
