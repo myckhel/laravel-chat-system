@@ -207,7 +207,7 @@ class MessageController extends Controller
      */
     public function destroy(Request $request, Message $message)
     {
-      // $this->authorize('delete', $message);
+      $this->authorize('delete', $message);
       $request->validate([
         'everyone' => 'bool'
 			]);

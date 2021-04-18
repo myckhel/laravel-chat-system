@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Policies;
+namespace Myckhel\ChatSystem\Policies;
 
-use App\Models\Message;
+use Myckhel\ChatSystem\Models\Message;
 use Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
