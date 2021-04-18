@@ -215,7 +215,7 @@ class MessageController extends Controller
       $user     = $request->user();
 			$everyone = $request->everyone;
 
-			if($message->participantsHasDeleted()){
+			if($message->participantsHasDeleted(maker_id: $user->id)){
   			return ['status' => $message->forceDelete()];
 			}
 			return ['status' => $message->makeDelete($user, $everyone)];

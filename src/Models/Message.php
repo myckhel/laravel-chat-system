@@ -94,10 +94,12 @@ class Message extends Model
       return $this->makeChatEvent($user, 'delete', $all);
     }
 
-    function participantsHasDeleted(){
+    function participantsHasDeleted($maker_id = null){
       [$participantsCount, $deleteEventsCount] = [
         $this->conversation->participants()->count(),
-        $this->chatEvents(false)->whereType('delete')->count()
+        $this->chatEvents(false)->whereType('delete')
+        ->when($maker_id, fn ($q) => $q->where('maker_id', '!=', $maker_id))
+        ->count()
       ];
       return $deleteEventsCount == $participantsCount-1;
     }
@@ -112,7 +114,7 @@ class Message extends Model
     private function makeChatEvent($user, $type = 'read', $all = false) {
       $create = [
         'made_id'    => $this->id,
-        'made_type'  => get_class($this),
+        'made_type'  => $this::class,
         'type'       => $type,
         'all'        => $all,
       ];
@@ -202,7 +204,7 @@ class MessageCollection extends Collection {
     $this->map(function ($msg) use(&$create, $all, $user) {
       $create[] = [
         'made_id'    => $msg->id,
-        'made_type'  => get_class($msg),
+        'made_type'  => $msg::class,
         'type'       => 'delete',
         'all'        => $all ? $msg->user_id === $user->id : false,
       ];
