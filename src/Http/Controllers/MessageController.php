@@ -205,8 +205,9 @@ class MessageController extends Controller
      * @param  \Myckhel\ChatSystem\Models\Message  $message
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, Message $message)
+    public function destroy(Request $request, $message)
     {
+      $message = config('chat-system.models.message')::findOrFail($message);
       $this->authorize('delete', $message);
       $request->validate([
         'everyone' => 'bool'
