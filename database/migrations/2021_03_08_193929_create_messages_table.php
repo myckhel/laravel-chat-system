@@ -14,7 +14,7 @@ class CreateMessagesTable extends Migration
     public function up()
     {
         Schema::create('messages', function (Blueprint $table) {
-            $userModel  = config('chat-system.user_model');
+            $userModel  = config('chat-system.models.user');
             $user_table = (new $userModel)->getTable();
             $table->id();
             $table->foreignId('conversation_id')->constrained()->onDelete('cascade');
