@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent;
 use Myckhel\ChatSystem\Database\Factories\ChatEventFactory;
+use Myckhel\ChatSystem\Traits\Config;
 
 class ChatEvent extends Model
 {
-    use HasFactory;
+    use HasFactory, Config;
     protected $fillable = ['maker_id', 'maker_type', 'made_id', 'made_type', 'type', 'all', 'created_at'];
     protected $casts    = ['maker_id' => 'int', 'made_id' => 'int', 'all' => 'bool'];
 
@@ -26,11 +27,11 @@ class ChatEvent extends Model
       $q->whereDoesntHave('message', fn($q) => $q->whereUserId($userId));
     }
     function message() {
-      $message = config('chat-system.models.message');
+      $message = self::config('models.message');
       return $this->belongsTo($message, 'made_id')->whereMadeType($message);
     }
     function conversation() {
-      $conversation = config('chat-system.models.message');
+      $conversation = self::config('models.conversation');
       return $this->belongsTo($conversation, 'made_id')->whereMadeType($conversation);
     }
 

@@ -9,10 +9,11 @@ use Myckhel\ChatSystem\Jobs\Chat\MakeEvent;
 use Carbon\Carbon;
 use Myckhel\ChatSystem\Database\Factories\ConversationFactory;
 use Myckhel\ChatSystem\Traits\ChatEvent\HasChatEvent;
+use Myckhel\ChatSystem\Traits\Config;
 
 class Conversation extends Model
 {
-  use HasFactory, HasChatEvent;
+  use HasFactory, HasChatEvent, Config;
   protected $fillable = ['user_id', 'name'];
   protected $casts    = ['user_id' => 'int'];
   protected $hidden   = ['pivot'];
@@ -106,7 +107,7 @@ class Conversation extends Model
   }
 
   public function author(){
-    return $this->belongsTo(config('chat-system.models.user'), 'user_id');
+    return $this->belongsTo(self::config('models.user'), 'user_id');
   }
 
   public function newCollection(array $models = Array()){

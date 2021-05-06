@@ -4,12 +4,14 @@ namespace Myckhel\ChatSystem\Traits\Message;
 use Myckhel\ChatSystem\Models\Message;
 use Myckhel\ChatSystem\Models\Conversation;
 use Myckhel\ChatSystem\Jobs\Chat\MakeEvent;
+use Myckhel\ChatSystem\Traits\Config;
 
 /**
  *
  */
 trait HasMessage
 {
+  use Config;
   function messages($conversation = null, $otherUser = null, Array $reply = []){
     if ($conversation || $otherUser) {
       $conversation = $this->conversations($conversation, $otherUser)->first();
@@ -28,11 +30,11 @@ trait HasMessage
       MakeEvent::dispatch($this, 'read', $conversation)->afterResponse();
       return $conversation->messages()->whereReply($reply);
     } elseif ($reply) {
-      return config('chat-system.models.message')::whereReplyId($reply['reply_id'])
+      return self::config('models.message')::whereReplyId($reply['reply_id'])
       ->whereReplyType($reply['reply_type']);
     } else {
       $conversation_ids = $this->conversations()->pluck('conversations.id');
-      return $this->hasMany(config('chat-system.models.message'))
+      return $this->hasMany(self::config('models.message'))
       ->where(fn ($q) =>
         $q->orWhereHas('conversation', fn ($q) =>
           $q->whereIn('conversations.id', $conversation_ids)
@@ -42,14 +44,17 @@ trait HasMessage
   }
 
   function undelivered() {
-    return config('chat-system.models.message')::where('user_id', '!=', $this->id)
+    return self::config('models.message')
+    ::where('user_id', '!=', $this->id)
     ->whereBelongsToMessages($this)
     ->hasNoEvent(fn ($q) => $q->whereMakerId($this->id)->whereType('deliver'))
     ->latest();
   }
 
   function conversations($conversation = null, $otherUser = null){
-    return $this->belongsToMany(config('chat-system.models.conversation'), 'conversation_users')->withTimestamps()
+    return $this->belongsToMany(
+      self::config('models.conversation'), 'conversation_users'
+    )->withTimestamps()
     ->when($conversation, fn ($q) => $q->where('conversations.id', $conversation->id ?? $conversation))
     ->when($otherUser, fn ($q) => $q->whereHas('participants', fn ($q) => $q->whereUserId($otherUser->id ?? $otherUser)));
   }

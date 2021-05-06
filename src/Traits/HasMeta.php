@@ -2,13 +2,14 @@
 namespace Myckhel\ChatSystem\Traits;
 
 use Myckhel\ChatSystem\Models\Meta;
+use Myckhel\ChatSystem\Traits\Config;
 
 /**
  *
  */
 trait HasMeta
 {
-  use HasDelete;
+  use HasDelete, Config;
   public function addMeta($metas, $check = []){
     $meta = $this->metas()->updateOrCreate($check, $metas);
     $this->load('metas');
@@ -35,7 +36,7 @@ trait HasMeta
   }
 
   public function metas(){
-    return $this->morphMany(config('chat-system.models.meta'), 'metable');
+    return $this->morphMany(self::config('models.meta'), 'metable');
   }
 
   public function scopeMetas($stmt, $metas = []){

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Myckhel\ChatSystem\Models\Message;
+use Myckhel\ChatSystem\Traits\Config;
 
 class MakeEvent implements ShouldQueue
 {
@@ -24,7 +25,7 @@ class MakeEvent implements ShouldQueue
       $this->user = $user;
       $this->type = $type;
       $this->conversation = $conversation;
-      $this->onQueue(config("chat-system.jobs.chat.make-event"));
+      $this->onQueue(Config::config("jobs.chat.make-event"));
     }
 
     /**
@@ -41,7 +42,7 @@ class MakeEvent implements ShouldQueue
         }
       } else {
         // get unread msg for conversations
-        $undelivered = config('chat-system.models.message')::with('conversation')
+        $undelivered = Config::config('models.message')::with('conversation')
         ->notMsgEvents('deliver', $this->user->id, fn ($q) =>
           $q->whereIn('id', $conversation->pluck('id'))
         )->where('user_id', '!=', $this->user->id)->get();

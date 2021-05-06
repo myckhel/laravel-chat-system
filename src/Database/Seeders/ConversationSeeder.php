@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Myckhel\ChatSystem\Models\Conversation;
 use Myckhel\ChatSystem\Models\ConversationUser;
 use Faker\Factory as Faker;
+use Myckhel\ChatSystem\Traits\Config;
 
 class ConversationSeeder extends Seeder
 {
@@ -16,8 +17,8 @@ class ConversationSeeder extends Seeder
      */
     public function run()
     {
-      $userModel  = config('chat-system.models.user');
-      $conversationModel  = config('chat-system.models.conversation');
+      $userModel  = Config::config('models.user');
+      $conversationModel  = Config::config('models.conversation');
       $user_key = (new $userModel)->getKeyName();
       $faker = Faker::create();
       $users = $userModel::pluck($user_key)->toArray();

@@ -8,6 +8,7 @@ use Myckhel\ChatSystem\Http\Requests\PaginableRequest;
 use Illuminate\Validation\Rule;
 use Myckhel\ChatSystem\Events\Message\Created;
 // use Myckhel\ChatSystem\Notifications\Message\Created as CreatedMessage;
+use Myckhel\ChatSystem\Traits\Config;
 
 class MessageController extends Controller
 {
@@ -29,7 +30,7 @@ class MessageController extends Controller
         'reply_id'           => 'int',
         'reply_type'         => [
           Rule::requiredIf(fn () => $request->reply_id),
-          "in:".config('chat-system.models.message'),
+          "in:".Config::config('models.message'),
         ],
       ]);
 
@@ -68,7 +69,7 @@ class MessageController extends Controller
 
       if ($system && $messages->currentPage() == $messages->lastPage()) {
         $msg = $messages->first();
-        $msgClass = config('chat-system.models.message');
+        $msgClass = Config::config('models.message');
         $conversation_id = $msg ? $msg->conversation_id : $request->conversation_id ?? $user->conversations()->latest()->first()->id ?? null;
         $systemSafe = new $msgClass([
           'conversation_id' => $conversation_id,
@@ -115,7 +116,7 @@ class MessageController extends Controller
         'reply_id'        => 'int',
         'reply_type'      => [
           Rule::requiredIf(fn () => $request->reply_id),
-          "in:".config('chat-system.models.message'),
+          "in:".Config::config('models.message'),
         ],
         // 'videos.*'        => 'mimetypes:video/webm,video/mp,video/mp4,video/quicktime|max:40000',
       ]);
@@ -141,7 +142,7 @@ class MessageController extends Controller
       ->when(
         $token,
         fn ($q) => $q->whereHas('metas', fn ($q) =>
-          $q->whereMetableType(config('chat-system.models.message'))
+          $q->whereMetableType(Config::config('models.message'))
           ->whereName('token')->whereValue($token)
         ),
         fn ($q) => $q->whereNull('id')
@@ -155,7 +156,7 @@ class MessageController extends Controller
         ]
       );
       $message->loadMorph('reply', [
-          config('chat-system.models.message') => ['reply'],
+          Config::config('models.message') => ['reply'],
       ]);
 
       if ($message->wasRecentlyCreated) {
@@ -207,7 +208,7 @@ class MessageController extends Controller
      */
     public function destroy(Request $request, $message)
     {
-      $message = config('chat-system.models.message')::findOrFail($message);
+      $message = Config::config('models.message')::findOrFail($message);
       $this->authorize('delete', $message);
       $request->validate([
         'everyone' => 'bool'

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Myckhel\ChatSystem\Http\Controllers\ConversationController;
 use Myckhel\ChatSystem\Http\Controllers\MessageController;
 use Myckhel\ChatSystem\Http\Controllers\ChatEventController;
+use Myckhel\ChatSystem\Traits\Config;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,8 +18,8 @@ use Myckhel\ChatSystem\Http\Controllers\ChatEventController;
 |
 */
 
-$middlewares  = config('chat-system.route.middlewares');
-$prefix       = config('chat-system.route.prefix');
+$middlewares  = Config::config('route.middlewares');
+$prefix       = Config::config('route.prefix');
 
 Route::group(['prefix' => $prefix, 'middleware' => $middlewares], function(){
   Route::get('conversations/count', [ConversationController::class, 'count']);

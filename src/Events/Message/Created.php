@@ -8,6 +8,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Myckhel\ChatSystem\Traits\Config;
 
 class Created implements ShouldBroadcast
 {
@@ -22,7 +23,7 @@ class Created implements ShouldBroadcast
      */
     public function __construct($message){
       $this->message = $message;
-      $this->broadcastQueue = config("chat-system.queues.events.message.created");
+      $this->broadcastQueue = Config::config("queues.events.message.created");
     }
 
     public function broadcastAs() {

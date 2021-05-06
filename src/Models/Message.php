@@ -13,10 +13,11 @@ use Myckhel\ChatSystem\Traits\ChatEvent\HasChatEvent;
 use Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent;
 use Myckhel\ChatSystem\Traits\HasMeta;
 use Myckhel\ChatSystem\Database\Factories\MessageFactory;
+use Myckhel\ChatSystem\Traits\Config;
 
 class Message extends Model
 {
-    use HasFactory, HasChatEvent, HasMeta;
+    use HasFactory, HasChatEvent, HasMeta, Config;
     protected $fillable = ['conversation_id', 'user_id', 'reply_id', 'reply_type', 'message'];
     protected $casts    = ['conversation_id' => 'int', 'reply_id' => 'int', 'user_id' => 'int'];
     protected $searches = ['message'];
@@ -131,17 +132,17 @@ class Message extends Model
 
     public function participants($user = null){
       $user_id = $user->id ?? $user ?? null;
-      return config('chat-system.models.conversation_user')::whereHas('conversation', fn ($q) =>
+      return self::config('models.conversation_user')::whereHas('conversation', fn ($q) =>
         $q->whereId($this->conversation_id)->whereHas('participants', fn ($q) => $q->when($user_id, fn ($q) => $q->whereUserId($user_id)))
       );
     }
 
     public function conversation(){
-      return $this->belongsTo(config('chat-system.models.conversation'));
+      return $this->belongsTo(self::config('models.conversation'));
     }
 
     function chatEvents(Bool $distinctType = true){
-      return $this->morphMany(config('chat-system.models.chat_event'), 'made')
+      return $this->morphMany(self::config('models.chat_event'), 'made')
       ->when($distinctType, fn ($q) => $q->distinct('type'))
       ->latest();
     }
@@ -151,7 +152,7 @@ class Message extends Model
     // }
 
     public function sender(){
-      return $this->belongsTo(config('chat-system.models.user'), 'user_id');
+      return $this->belongsTo(self::config('models.user'), 'user_id');
     }
 
     public function reply(): MorphTo {

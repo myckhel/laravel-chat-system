@@ -5,6 +5,7 @@ namespace Myckhel\ChatSystem\Database\Factories;
 use Myckhel\ChatSystem\Models\Message;
 use Myckhel\ChatSystem\Models\ChatEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Myckhel\ChatSystem\Traits\Config;
 
 class MessageFactory extends Factory
 {
@@ -39,7 +40,7 @@ class MessageFactory extends Factory
                 $q->whereNotParticipant($message->user_id)->with('participant')
               ])->conversation->participant->user_id,
             ]),
-            'maker_type'   => config('chat-system.user_model'),
+            'maker_type'   => Config::config('user_model'),
           ]);
         } catch (\Exception $e) {}
       });

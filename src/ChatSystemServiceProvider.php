@@ -31,9 +31,9 @@ class ChatSystemServiceProvider extends ServiceProvider {
     $this->mergeConfigFrom(__DIR__.'/../config/chat-system.php', 'chat-system');
 
     // Register the service the package provides.
-    $this->app->singleton('chat-system', function ($app) {
-        return new ChatSystem;
-    });
+    $this->app->singleton('chat-system', fn ($app) =>
+        new ChatSystem
+    );
   }
 
   /**

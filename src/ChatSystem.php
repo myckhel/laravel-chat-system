@@ -4,9 +4,11 @@ namespace Myckhel\ChatSystem;
 use Illuminate\Support\Facades\Gate;
 use Myckhel\ChatSystem\Observers\ChatEventObserver;
 use Myckhel\ChatSystem\Observers\ConversationObserver;
+use Myckhel\ChatSystem\Traits\Config;
 
 class ChatSystem
 {
+  use Config;
   static function hello() {
     return 'hello-world';
   }
@@ -19,8 +21,8 @@ class ChatSystem
   }
 
   static function registerObservers() {
-    config('chat-system.models.chat_event')::observe(ChatEventObserver::class);
-    config('chat-system.models.conversation')::observe(ConversationObserver::class);
+    self::config('models.chat_event')::observe(ChatEventObserver::class);
+    self::config('models.conversation')::observe(ConversationObserver::class);
   }
 
   static function registerBroadcastRoutes() {

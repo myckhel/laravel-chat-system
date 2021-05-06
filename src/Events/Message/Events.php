@@ -10,6 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Myckhel\ChatSystem\Models\Message;
+use Myckhel\ChatSystem\Traits\Config;
 
 class Events implements ShouldBroadcast
 {
@@ -26,12 +27,12 @@ class Events implements ShouldBroadcast
       $this->event = $event;
       if (
         $event->type == 'delete'
-        && $event->made_type == config('chat-system.models.message')
+        && $event->made_type == Config::config('models.message')
       ) {
         $this->conversation_id = $event->made->conversation->id;
         $event->unsetRelation('made');
       }
-      $this->broadcastQueue = config("chat-system.queues.events.message.events");
+      $this->broadcastQueue = Config::config("queues.events.message.events");
     }
 
     public function broadcastAs()
@@ -50,7 +51,7 @@ class Events implements ShouldBroadcast
       $conversation_id = $this->conversation_id;
       if (
         $event->type == 'delete'
-        && $event->made_type == config('chat-system.models.message')
+        && $event->made_type == Config::config('models.message')
       ) {
         if ($event->all) {
           return new PrivateChannel("message-event-created.{$conversation_id}");
