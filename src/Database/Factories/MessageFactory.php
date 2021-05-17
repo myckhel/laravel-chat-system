@@ -40,7 +40,7 @@ class MessageFactory extends Factory
                 $q->whereNotParticipant($message->user_id)->with('participant')
               ])->conversation->participant->user_id,
             ]),
-            'maker_type'   => Config::config('user_model'),
+            'maker_type'   => Config::config('models.user'),
           ]);
         } catch (\Exception $e) {}
       });
