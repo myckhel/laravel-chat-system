@@ -141,7 +141,9 @@ class ConversationController extends Controller
       $user = $request->user();
       $type = $request->type;
 
-      return $user->conversations()->whereHasLastMessage($user)
+      return $user->conversations()
+      ->whereNotTrashed($user->id)
+      ->whereHasLastMessage($user)
       ->when($type, fn ($q) => $q->whereHas('unread'))
       ->count();
     }

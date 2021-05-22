@@ -185,7 +185,7 @@ class MessageController extends Controller
      */
     public function show($message)
     {
-      $message = config('chat-system.models.message')::findOrFail($message);
+      $message = Config::config('models.message')::findOrFail($message);
       return $message;
     }
 
