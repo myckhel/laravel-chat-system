@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Meta extends Model
 {
   use HasFactory;
-  protected $fillable = ['name', 'value', 'type'];
+  protected $fillable = ['name', 'value', 'type', 'metable_type', 'metable_id'];
 
   public function metable(): MorphTo{
     return $this->morphTo();

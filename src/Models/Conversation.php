@@ -23,7 +23,10 @@ class Conversation extends Model
   }
 
   function scopeWhereHasLastMessage($q, $user = null) {
-    $q->whereHas('last_message', fn ($q) => $q->whereConversationWasntDeleted($user));
+    $q->whereHas('last_message', fn ($q) =>
+      $q->whereDoesntHave('metas', fn ($q) => $q->whereName('system'))
+      ->whereConversationWasntDeleted($user)
+    );
   }
 
   function makeDelete($user = null) {
@@ -39,7 +42,7 @@ class Conversation extends Model
   private function makeChatEvent($user, $type = 'delete', $row = false) {
     $create = [
       'made_id'    => $this->id,
-      'made_type'  => get_class($this),
+      'made_type'  => $this::class,
       'type'       => $type,
     ];
 
@@ -52,7 +55,7 @@ class Conversation extends Model
   }
 
   public function last_message(){
-    return $this->hasOne(Message::class)->latest();
+    return $this->hasOne(self::config('models.message'))->latest();
   }
 
   function scopeWhereNotParticipant($q, $user) {
@@ -60,15 +63,15 @@ class Conversation extends Model
   }
 
   public function participants(){
-    return $this->hasMany(ConversationUser::class);
+    return $this->hasMany(self::config('models.conversation_user'));
   }
   public function participant($user = null){
-    return $this->hasOne(ConversationUser::class)->latest()
+    return $this->hasOne(self::config('models.conversation_user'))->latest()
     ->when($user, fn ($q) => $q->whereUserId($user->id ?? $user));
   }
   public function otherParticipant($user = null){
     $user_id = $user->id ?? $user ?? auth()->user()->id ?? null;
-    return $this->hasOne(ConversationUser::class)->latest()
+    return $this->hasOne(self::config('models.conversation_user'))->latest()
     ->where('user_id', '!=', $user_id);
   }
 
@@ -77,7 +80,7 @@ class Conversation extends Model
   }
 
   public function messages(){
-    return $this->hasMany(Message::class);
+    return $this->hasMany(self::config('models.message'));
   }
 
   public function unread($user = null){
