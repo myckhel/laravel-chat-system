@@ -37,4 +37,14 @@ return [
       ],
     ],
   ],
+
+  /*
+  * Model Observers
+  */
+  "observers"         => [
+    "models"          => [
+      "chat_event"    => 'Myckhel\\ChatSystem\\Observers\\ChatEventObserver',
+      "conversation"  => 'Myckhel\\ChatSystem\\Observers\\ConversationObserver',
+    ]
+  ]
 ];
