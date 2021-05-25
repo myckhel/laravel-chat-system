@@ -29,7 +29,7 @@ class Events implements ShouldBroadcast
         $event->type == 'delete'
         && $event->made_type == Config::config('models.message')
       ) {
-        $this->conversation_id = $event->made->conversation->id;
+        $this->conversation_id = $event->made?->conversation?->id;
         $event->unsetRelation('made');
       }
       $this->broadcastQueue = Config::config("queues.events.message.events");
@@ -38,6 +38,13 @@ class Events implements ShouldBroadcast
     public function broadcastAs()
     {
       return "message";
+    }
+
+    public function broadcastWhen()
+    {
+      return !($this->event->type == 'delete'
+        && $this->event->made_type == Config::config('models.message')
+        && !$this->conversation_id);
     }
 
     /**
