@@ -66,28 +66,6 @@ class MessageController extends Controller
       $messages->map(fn ($msg) => $msg->metas->keyValue());
 
       // $messages->withUrls(['image', 'videos']);
-
-      if ($system && $messages->currentPage() == $messages->lastPage()) {
-        $msg = $messages->first();
-        $msgClass = Config::config('models.message');
-        $conversation_id = $msg ? $msg->conversation_id : $request->conversation_id ?? $user->conversations()->latest()->first()->id ?? null;
-        $systemSafe = new $msgClass([
-          'conversation_id' => $conversation_id,
-          'message' => trans('msg.chat.system.safety'),
-        ]);
-        $systemSafe->setAppends(['system']);
-        $systemSafe->id = 1;
-
-        $systemDesc = new $msgClass([
-          'conversation_id' => $conversation_id,
-          'message' => trans('msg.chat.system.msg_desc'),
-        ]);
-        $systemDesc->setAppends(['system']);
-        $systemDesc->id = 2;
-
-        $messages->appendSystemMessage($systemDesc, $systemSafe);
-      }
-
       return $messages;
     }
 
@@ -185,7 +163,7 @@ class MessageController extends Controller
      */
     public function show($message)
     {
-      $message = config('chat-system.models.message')::findOrFail($message);
+      $message = Config::config('models.message')::findOrFail($message);
       return $message;
     }
 
