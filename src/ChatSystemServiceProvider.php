@@ -54,9 +54,9 @@ class ChatSystemServiceProvider extends ServiceProvider {
     // Publishing the configuration file.
     $this->publishes([
         __DIR__.'/../config/chat-system.php' => config_path('chat-system.php'),
-    ], 'chat-system.config');
+    ], 'config');
 
-    // Publishing the configuration file.
+    // Publishing the migration file.
     if (! class_exists('CreateConversationsTable')) {
         $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
@@ -70,12 +70,12 @@ class ChatSystemServiceProvider extends ServiceProvider {
 
     // Publishing the seeders.
     $this->publishes([
-        __DIR__.'/../database/seeders' => database_path('seeders'),
+        __DIR__.'/database/seeders' => database_path('seeders'),
     ], 'seeders');
 
     // Publishing the factories.
     $this->publishes([
-        __DIR__.'/../database/factories' => database_path('factories'),
+        __DIR__.'/database/factories' => database_path('factories'),
     ], 'factories');
 
     // Publishing assets.
