@@ -1,1 +1,0 @@
-(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[720],{3048:function(s){"use strict";s.exports=JSON.parse('{"allTagsPath":"/laravel-chat-system-docs/blog/tags","slug":"hello","name":"hello","count":1,"permalink":"/laravel-chat-system-docs/blog/tags/hello"}')}}]);

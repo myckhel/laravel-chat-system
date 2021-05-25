@@ -10,7 +10,7 @@
     <entry>
         <title type="html"><![CDATA[Hello]]></title>
         <id>hello-world</id>
-        <link href="https://myckhel.github.io/laravel-chat-system-docs/blog/hello-world"/>
+        <link href="https://myckhel.github.io/laravel-chat-system/blog/hello-world"/>
         <updated>2019-05-29T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[Welcome to this blog. This blog is created with Docusaurus 2 alpha.]]></summary>
     </entry>
