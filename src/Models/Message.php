@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 // use App\Traits\HasImage;
 use Carbon\Carbon;
 use Myckhel\ChatSystem\Traits\ChatEvent\HasChatEvent;
-use Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent;
+use Myckhel\ChatSystem\Contracts\ChatEventMaker;
 use Myckhel\ChatSystem\Traits\HasMeta;
 use Myckhel\ChatSystem\Database\Factories\MessageFactory;
 use Myckhel\ChatSystem\Traits\Config;
@@ -76,7 +76,7 @@ class Message extends Model
       return $this->id < 100;
     }
 
-    function scopeWhereConversationWasntDeleted($q, HasMakeChatEvent $by = null) {
+    function scopeWhereConversationWasntDeleted($q, ChatEventMaker $by = null) {
       $q->whereDoesntHave('conversation', fn ($q) =>
         $q->whereHas('chatEvents', fn ($q) =>
           $q->whereType('delete')
@@ -192,7 +192,7 @@ class MessageCollection extends Collection {
     return $this->makeChatEvent($user);
   }
 
-  function makeDelete(HasMakeChatEvent $user = null, $all = false){
+  function makeDelete(ChatEventMaker $user = null, $all = false){
     return $this->makeChatEvent($user, 'delete', $all);
   }
 
@@ -200,7 +200,7 @@ class MessageCollection extends Collection {
     return $this->makeChatEvent($user, 'deliver');
   }
 
-  private function makeChatEvent(HasMakeChatEvent $user, $type = 'read', $all = false) {
+  private function makeChatEvent(ChatEventMaker $user, $type = 'read', $all = false) {
     $create = [];
     $this->map(function ($msg) use(&$create, $all, $user) {
       $create[] = [

@@ -5,7 +5,7 @@ namespace Myckhel\ChatSystem\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent;
+use Myckhel\ChatSystem\Contracts\ChatEventMaker;
 use Myckhel\ChatSystem\Database\Factories\ChatEventFactory;
 use Myckhel\ChatSystem\Traits\Config;
 
@@ -19,7 +19,7 @@ class ChatEvent extends Model
       return ChatEventFactory::new();
     }
 
-    function scopeWithTrashed($q, HasMakeChatEvent $user) {
+    function scopeWithTrashed($q, ChatEventMaker $user) {
       $q->select('id', 'maker_id', 'maker_type', 'made_id', 'made_type', 'all')->whereMakerId($user->id)->orWhere('all', true);
     }
 

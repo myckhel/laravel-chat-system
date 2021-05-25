@@ -3,7 +3,7 @@
 namespace Myckhel\ChatSystem\Policies;
 
 use Myckhel\ChatSystem\Models\Message;
-use Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent;
+use Myckhel\ChatSystem\Contracts\ChatEventMaker;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class MessagePolicy
@@ -13,10 +13,10 @@ class MessagePolicy
     /**
      * Determine whether the user can view any models.
      *
-     * @param  \Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent  $user
+     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
      * @return mixed
      */
-    public function viewAny(HasMakeChatEvent $user)
+    public function viewAny(ChatEventMaker $user)
     {
         //
     }
@@ -24,11 +24,11 @@ class MessagePolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param  \Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent  $user
+     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
      * @param  \App\Models\Message  $message
      * @return mixed
      */
-    public function view(HasMakeChatEvent $user, Message $message)
+    public function view(ChatEventMaker $user, Message $message)
     {
         //
     }
@@ -36,10 +36,10 @@ class MessagePolicy
     /**
      * Determine whether the user can create models.
      *
-     * @param  \Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent  $user
+     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
      * @return mixed
      */
-    public function create(HasMakeChatEvent $user)
+    public function create(ChatEventMaker $user)
     {
         //
     }
@@ -47,11 +47,11 @@ class MessagePolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param  \Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent  $user
+     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
      * @param  \App\Models\Message  $message
      * @return mixed
      */
-    public function update(HasMakeChatEvent $user, Message $message)
+    public function update(ChatEventMaker $user, Message $message)
     {
         //
     }
@@ -59,11 +59,11 @@ class MessagePolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param  \Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent  $user
+     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
      * @param  \App\Models\Message  $message
      * @return mixed
      */
-    public function delete(HasMakeChatEvent $user, Message $message)
+    public function delete(ChatEventMaker $user, Message $message)
     {
       return $user->relatedToMessage($message);
     }
@@ -71,11 +71,11 @@ class MessagePolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param  \Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent  $user
+     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
      * @param  \App\Models\Message  $message
      * @return mixed
      */
-    public function restore(HasMakeChatEvent $user, Message $message)
+    public function restore(ChatEventMaker $user, Message $message)
     {
         //
     }
@@ -83,11 +83,11 @@ class MessagePolicy
     /**
      * Determine whether the user can permanently delete the model.
      *
-     * @param  \Myckhel\ChatSystem\Traits\ChatEvent\HasMakeChatEvent  $user
+     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
      * @param  \App\Models\Message  $message
      * @return mixed
      */
-    public function forceDelete(HasMakeChatEvent $user, Message $message)
+    public function forceDelete(ChatEventMaker $user, Message $message)
     {
         //
     }
