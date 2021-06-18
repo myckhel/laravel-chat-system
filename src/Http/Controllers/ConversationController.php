@@ -22,6 +22,10 @@ class ConversationController extends Controller
       $order    = $request->order;
       $orderBy  = $request->orderBy;
 
+      $eventColumns = ['id', 'maker_id', 'made_type', 'made_id', 'created_at'];
+
+      $queryEvent = fn ($q) => $q->select($eventColumns)->notMessanger($user->id);
+
       $conversations = $user->conversations()
       ->whereHasLastMessage($user)
       ->withCount([
@@ -30,9 +34,9 @@ class ConversationController extends Controller
       ])
       ->orderByDesc('latest_message_at')
       ->with([
-        'delivery' => fn ($q) => $q->select('id', 'maker_id', 'made_type', 'made_id', 'created_at')->notMessanger($user->id)->where('maker_id', '!=', $user->id),
-        'read' => fn ($q) => $q->select('id', 'maker_id', 'made_type', 'made_id', 'created_at')->notMessanger($user->id)->where('maker_id', '!=', $user->id),
-        'trashed' => fn ($q) => $q->select('id', 'maker_id', 'made_type', 'made_id', 'created_at')->whereMakerId($user->id),
+        'delivery'      => fn ($q) => $queryEvent($q)->where('maker_id', '!=', $user->id),
+        'read'          => fn ($q) => $queryEvent($q)->where('maker_id', '!=', $user->id),
+        'trashed'       => $queryEvent,
         'last_message' => fn ($q) => $q->select(['id','user_id','message','conversation_id', 'created_at'])
           ->with([
             // 'latestMedia' => fn ($q) => $q->select('id', 'model_type', 'model_id', 'name'),
