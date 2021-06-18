@@ -55,18 +55,11 @@ class Events implements ShouldBroadcast
     public function broadcastOn()
     {
       $event = $this->event;
-      $conversation_id = $this->conversation_id;
-      if (
-        $event->type == 'delete'
-        && $event->made_type == Config::config('models.message')
-      ) {
-        if ($event->all) {
-          return new PrivateChannel("message-event-created.{$conversation_id}");
-        } else {
-          return new PrivateChannel("message-event.user.{$this->event->maker_id}");
-        }
+      if ($event->type == 'delete' && !$event->all && $event->made_type == 'App\\Models\\Message') {
+        return new PrivateChannel("message-event.user.{$this->event->maker_id}");
       } else {
-        return new PrivateChannel("message-event-created.{$this->event->made_id}");
+        $participant_ids = $event->made->participants()->pluck('user_id')->toArray();
+        return array_map(fn ($id) => new PrivateChannel("message-event.user.{$id}"), $participant_ids);
       }
     }
 }

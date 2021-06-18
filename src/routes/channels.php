@@ -15,7 +15,6 @@ use Myckhel\ChatSystem\Broadcasting\Chat\UserMessageChannel;
 | used to check if an authenticated user can listen to the channel.
 |
 */
-Broadcast::channel('message-event-created.{conversation}', ConversationChannel::class);
 Broadcast::channel('message-created.{conversation}', ConversationChannel::class);
 Broadcast::channel('message-new.user.{user}', UserMessageChannel::class);
 Broadcast::channel('message-event.user.{user}', UserMessageChannel::class);
