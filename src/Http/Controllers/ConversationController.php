@@ -74,14 +74,20 @@ class ConversationController extends Controller
      */
     public function store(Request $request)
     {
-      $request->validate([
+      @[
+        'name'    => $name,
+        'type'    => $type,
+      ] = $request->validate([
         'name' => 'string',
+        'type' => 'in:private,group,issue',
       ]);
+
       $user     = $request->user();
 
       return $user->conversations()->create([
         'user_id' => $user->id,
-        'name'    => $request->name,
+        'name'    => $name,
+        'type'    => $type,
       ]);
     }
 

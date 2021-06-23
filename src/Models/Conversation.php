@@ -14,7 +14,7 @@ use Myckhel\ChatSystem\Traits\Config;
 class Conversation extends Model
 {
   use HasFactory, HasChatEvent, Config;
-  protected $fillable = ['user_id', 'name'];
+  protected $fillable = ['user_id', 'name', 'type'];
   protected $casts    = ['user_id' => 'int'];
   protected $hidden   = ['pivot'];
 
