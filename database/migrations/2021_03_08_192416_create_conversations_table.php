@@ -21,6 +21,7 @@ class CreateConversationsTable extends Migration
           $table->id();
           $table->foreignId('user_id')->constrained($user_table)->onDelete('cascade');
           $table->string('name')->nullable();
+          $table->enum('type', ['private', 'group', 'issue'])->default('private')->index();
           $table->timestamps();
       });
     }
