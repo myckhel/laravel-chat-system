@@ -54,7 +54,7 @@ class Message extends Model
       );
     }
 
-    function scopeWhereBelongsToMessages($q, $user = null) {
+    function scopeWhereRelatedToUser($q, $user = null) {
       $q->whereHas('conversation', fn ($q) =>
         $q->whereHas('participants', fn ($q) => $q->whereUserId($user->id ?? $user))
       );
