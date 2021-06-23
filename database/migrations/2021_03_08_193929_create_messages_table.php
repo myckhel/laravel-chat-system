@@ -22,6 +22,7 @@ class CreateMessagesTable extends Migration
             $table->foreignId('user_id')->constrained($user_table)->onDelete('cascade');
             $table->nullableMorphs('reply');
             $table->text('message')->nullable();
+            $table->enum('type', ['user', 'system', 'activity'])->default('user')->index();
             $table->timestamps();
         });
     }

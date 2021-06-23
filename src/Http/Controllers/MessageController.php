@@ -87,7 +87,15 @@ class MessageController extends Controller
      */
     public function store(Request $request)
     {
-      $request->validate([
+      @[
+        'reply_id'        => $reply_id,
+        'reply_type'      => $reply_type,
+        'image'           => $image,
+        'videos'          => $videos,
+        'token'           => $token,
+        'other_user_id'   => $other_user_id,
+        'type'            => $type,
+      ] = $request->validate([
         'conversation_id' => 'int',
         'other_user_id'   => ['int', Rule::requiredIf(fn () => !$request->conversation_id)],
         'message'         => '',
@@ -96,13 +104,11 @@ class MessageController extends Controller
           Rule::requiredIf(fn () => $request->reply_id),
           "in:".Config::config('models.message'),
         ],
+        'type'            => 'in:user,activity',
         // 'videos.*'        => 'mimetypes:video/webm,video/mp,video/mp4,video/quicktime|max:40000',
       ]);
       $user       = $request->user();
-      $image      = $request->image;
-      $videos     = $request->videos;
-      $token      = $request->token;
-      $otherUser  = $request->other_user_id ? $user->findOrFail($request->other_user_id) : null;
+      $otherUser  = $other_user_id ? $user->findOrFail($other_user_id) : null;
 
       $conversation = $user->conversations($request->conversation_id, $request->other_user_id)
       ->first();
@@ -127,10 +133,11 @@ class MessageController extends Controller
       )
       ->firstOrCreate([],
         [
-          'reply_id'        => $request->reply_id,
-          'reply_type'      => $request->reply_type,
+          'reply_id'        => $reply_id,
+          'reply_type'      => $reply_type,
           'user_id'         => $user->id,
           'message'         => $request->message,
+          'type'            => $type,
         ]
       );
       $message->loadMorph('reply', [

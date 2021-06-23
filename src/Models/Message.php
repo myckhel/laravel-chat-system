@@ -18,7 +18,7 @@ use Myckhel\ChatSystem\Traits\Config;
 class Message extends Model
 {
     use HasFactory, HasChatEvent, HasMeta, Config;
-    protected $fillable = ['conversation_id', 'user_id', 'reply_id', 'reply_type', 'message'];
+    protected $fillable = ['conversation_id', 'user_id', 'reply_id', 'reply_type', 'message', 'type'];
     protected $casts    = ['conversation_id' => 'int', 'reply_id' => 'int', 'user_id' => 'int'];
     protected $searches = ['message'];
     protected $appends  = ['isSender'];
