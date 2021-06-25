@@ -48,10 +48,10 @@ class ConversationController extends Controller
 
       $conversations->makeDelivered($user);
 
-      // $conversations->map(fn ($conversation) =>
-      //   $conversation->participant
-      //     && $conversation->participant->user->withUrls('avatar')
-      // );
+      $conversations->map(function ($conversation) {
+        if ($conversation->type == 'private')
+          $conversation->name = $conversation->participant?->user?->name;
+      });
 
       return $conversations;
     }
@@ -103,11 +103,19 @@ class ConversationController extends Controller
       $this->authorize('view', $conversation);
       $user = $request->user();
 
-      $conversation->load([
-        'otherParticipant:id,conversation_id,user_id',
-        'otherParticipant.user'
-      ])
-      ->unread($user->id)->get()->makeRead($user);
+      $conversation
+        ->unread($user->id)->get()->makeRead($user);
+
+      if($conversation->type === 'private'){
+        $conversation->load([
+          'participant' => fn ($q) => $q->select(['id', 'conversation_id', 'user_id'])->where('user_id', '!=', $user->id),
+          'participant.user:id,name'
+        ]);
+
+        if ($conversation->participant?->user) {
+          $conversation->name = $conversation->participant?->user?->name;
+        }
+      }
 
       return $conversation;
     }
@@ -123,9 +131,22 @@ class ConversationController extends Controller
     {
       $conversation = config('chat-system.models.conversation')::findOrFail($conversation);
       $this->authorize('update', $conversation);
-      $request->validate([]);
+
+      @[
+        'name'    => $name,
+        'type'    => $type,
+      ] = $request->validate([
+        'name' => 'string',
+        'type' => 'in:private,group,issue',
+      ]);
+
       $user     = $request->user();
-      $conversation->update(array_filter($request->only($conversation->getFillable())));
+
+      $conversation->update([
+        'name'    => $name,
+        'type'    => $type,
+      ]);
+
       return $conversation;
     }
 
