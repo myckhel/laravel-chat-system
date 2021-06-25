@@ -137,7 +137,7 @@ class MessageController extends Controller
           'reply_type'      => $reply_type,
           'user_id'         => $user->id,
           'message'         => $request->message,
-          'type'            => $type,
+          'type'            => $type ?? 'user',
         ]
       );
       $message->loadMorph('reply', [
