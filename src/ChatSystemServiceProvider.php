@@ -28,7 +28,7 @@ class ChatSystemServiceProvider extends ServiceProvider {
    * @return void
    */
   function register(): void {
-    $this->mergeConfigFrom(__DIR__.'/../config/chat-system.php', 'chat-system');
+    $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'chat-system');
 
     // Register the service the package provides.
     $this->app->singleton('chat-system', fn ($app) =>
@@ -53,7 +53,7 @@ class ChatSystemServiceProvider extends ServiceProvider {
   function bootForConsole(): void {
     // Publishing the configuration file.
     $this->publishes([
-        __DIR__.'/../config/chat-system.php' => config_path('chat-system.php'),
+        __DIR__.'/../config/config.php' => config_path('chat-system.php'),
     ], 'config');
 
     // Publishing the migration file.
