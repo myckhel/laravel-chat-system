@@ -29,21 +29,22 @@ class Conversation extends Model
     );
   }
 
-  function makeDelete($user = null) {
-    return $this->makeChatEvent($user);
+  function makeDelete($user = null, $row = false, $all = false) {
+    return $this->makeChatEvent($user, 'delete', $row, $all);
   }
-  function makeRead($user = null) {
-    return $this->makeChatEvent($user, 'read', true);
+  function makeRead($user = null, $row = true, $all = false) {
+    return $this->makeChatEvent($user, 'read', $row, $all);
   }
-  function makeDelivery($user = null) {
-    return $this->makeChatEvent($user, 'deliver', true);
+  function makeDelivery($user = null, $row = true, $all = false) {
+    return $this->makeChatEvent($user, 'deliver', $row, $all);
   }
 
-  private function makeChatEvent($user, $type = 'delete', $row = false) {
+  private function makeChatEvent($user, $type = 'delete', $row = false, $all = false) {
     $create = [
       'made_id'    => $this->id,
       'made_type'  => $this::class,
       'type'       => $type,
+      'all'        => $all,
     ];
 
     return $row
