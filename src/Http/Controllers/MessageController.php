@@ -60,10 +60,7 @@ class MessageController extends Controller
       // ->withUrls(['image', 'videos'])
       ->whereConversationWasntDeleted($user)
       ->with($with)->latest()
-      ->metas(['token'])
       ->paginate($request->pageSize);
-
-      $messages->map(fn ($msg) => $msg->metas->keyValue());
 
       // $messages->withUrls(['image', 'videos']);
       return $messages;
@@ -125,10 +122,7 @@ class MessageController extends Controller
       $message = $conversation->messages()
       ->when(
         $token,
-        fn ($q) => $q->whereHas('metas', fn ($q) =>
-          $q->whereMetableType(Config::config('models.message'))
-          ->whereName('token')->whereValue($token)
-        ),
+        fn ($q) => $q->where('metas->token', $token),
         fn ($q) => $q->whereNull('id')
       )
       ->firstOrCreate([],
@@ -146,8 +140,7 @@ class MessageController extends Controller
 
       if ($message->wasRecentlyCreated) {
         if ($token) {
-          $meta = ['name' => 'token', 'value' => $token];
-          $message->addMeta($meta, $meta);
+          $message->update(['metas->token' => $token]);
         }
 
         // $message->saveImage($image, 'image');
@@ -155,7 +148,6 @@ class MessageController extends Controller
 
         broadcast(new Created($message));
 
-        $token && $message->metas->keyValue();
         // $otherUser->notify(new CreatedMessage($message, $user));
       }
 

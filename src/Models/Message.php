@@ -11,15 +11,14 @@ use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
 use Myckhel\ChatSystem\Traits\ChatEvent\HasChatEvent;
 use Myckhel\ChatSystem\Contracts\ChatEventMaker;
-use Myckhel\ChatSystem\Traits\HasMeta;
 use Myckhel\ChatSystem\Database\Factories\MessageFactory;
 use Myckhel\ChatSystem\Traits\Config;
 
 class Message extends Model
 {
-    use HasFactory, HasChatEvent, HasMeta, Config;
-    protected $fillable = ['conversation_id', 'user_id', 'reply_id', 'reply_type', 'message', 'type'];
-    protected $casts    = ['conversation_id' => 'int', 'reply_id' => 'int', 'user_id' => 'int'];
+    use HasFactory, HasChatEvent, Config;
+    protected $fillable = ['conversation_id', 'user_id', 'reply_id', 'reply_type', 'message', 'type', 'metas'];
+    protected $casts    = ['conversation_id' => 'int', 'reply_id' => 'int', 'user_id' => 'int', 'metas' => 'array'];
     protected $searches = ['message'];
     protected $appends  = ['isSender'];
     protected $hidden   = ['media'];

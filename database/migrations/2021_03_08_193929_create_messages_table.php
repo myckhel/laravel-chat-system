@@ -23,6 +23,7 @@ class CreateMessagesTable extends Migration
             $table->nullableMorphs('reply');
             $table->text('message')->nullable();
             $table->enum('type', ['user', 'system', 'activity'])->default('user')->index();
+            $table->json('metas')->nullable();
             $table->timestamps();
         });
     }
