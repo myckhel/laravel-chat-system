@@ -120,6 +120,12 @@ class MessageController extends Controller
         ]);
       }
 
+      if($token){
+        $metas['token'] = $token; 
+      }else{
+        $metas = '';
+      }
+
       $message = $conversation->messages()
       ->when(
         $token,
@@ -133,6 +139,7 @@ class MessageController extends Controller
           'user_id'         => $user->id,
           'message'         => $request->message,
           'type'            => $type ?? 'user',
+          'metas'           => $metas,
         ]
       );
       $message->loadMorph('reply', [
@@ -140,9 +147,6 @@ class MessageController extends Controller
       ]);
 
       if ($message->wasRecentlyCreated) {
-        if ($token) {
-          $message->update(['metas->token' => $token]);
-        }
 
         // $message->saveImage($image, 'image');
         // $message->saveVideo($videos, 'videos');
