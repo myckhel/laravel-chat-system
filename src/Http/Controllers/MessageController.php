@@ -120,12 +120,6 @@ class MessageController extends Controller
         ]);
       }
 
-      if($token){
-        $metas['token'] = $token; 
-      }else{
-        $metas = '';
-      }
-
       $message = $conversation->messages()
       ->when(
         $token,
@@ -139,7 +133,7 @@ class MessageController extends Controller
           'user_id'         => $user->id,
           'message'         => $request->message,
           'type'            => $type ?? 'user',
-          'metas'           => $metas,
+          'metas'           => $token ? ['token' => $token] : null,
         ]
       );
       $message->loadMorph('reply', [
