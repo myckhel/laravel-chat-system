@@ -15,7 +15,7 @@ trait HasMessage
   function messages($conversation = null, $otherUser = null, Array $reply = [], $type = 'private'){
     if ($type == 'private') {
       if ($conversation || $otherUser) {
-        $conversation = $this->conversations($conversation, $otherUser, type: [$type])->first();
+        $conversation = $this->conversations($conversation, $otherUser)->first();
         // if conversation doesnt exist and add participant
         if (!$conversation) {
           $conversation = $this->conversations()->create([
