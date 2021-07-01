@@ -31,7 +31,6 @@ class Created implements ShouldBroadcast
     }
 
     function broadcastWith() {
-      $this->message->metas->keyValue();
       return [
         'message' => $this->message,
       ];

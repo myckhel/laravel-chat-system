@@ -10,7 +10,6 @@ return [
     "conversation_user"  => "Myckhel\\ChatSystem\\Models\\ConversationUser",
     "message"       => "Myckhel\\ChatSystem\\Models\\Message",
     "chat_event"    => "Myckhel\\ChatSystem\\Models\\ChatEvent",
-    "meta"          => "Myckhel\\ChatSystem\\Models\\Meta",
   ],
 
   /*
