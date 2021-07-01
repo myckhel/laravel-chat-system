@@ -24,7 +24,7 @@ class Conversation extends Model
 
   function scopeWhereHasLastMessage($q, $user = null) {
     $q->whereHas('last_message', fn ($q) =>
-      $q->whereDoesntHave('metas', fn ($q) => $q->whereName('system'))
+      $q->where('type', '!=', 'system')     
       ->whereConversationWasntDeleted($user)
     );
   }
