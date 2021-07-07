@@ -186,4 +186,11 @@ class ConversationController extends Controller
       $user = $request->user();
       return $conversation->addParticipant($user);
     }
+
+    function leave(Request $request, $conversation) {
+      $conversation = Config::config('models.conversation')::findOrFail($conversation);
+      $this->authorize('join', $conversation);
+      $user = $request->user();
+      return $conversation->removeParticipant($user);
+    }
 }

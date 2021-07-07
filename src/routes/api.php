@@ -25,6 +25,7 @@ Route::group(['prefix' => $prefix, 'middleware' => $middlewares], function(){
   // conversations
   Route::get('conversations/count',                   [ConversationController::class, 'count']);
   Route::post('conversations/{conversation}/join',    [ConversationController::class, 'join']);
+  Route::delete('conversations/{conversation}/join',  [ConversationController::class, 'leave']);
   // messages
   Route::delete('messages',         [MessageController::class, 'delete']);
   // apiResources
