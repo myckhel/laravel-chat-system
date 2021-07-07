@@ -10,8 +10,11 @@ use Carbon\Carbon;
 use Myckhel\ChatSystem\Database\Factories\ConversationFactory;
 use Myckhel\ChatSystem\Traits\ChatEvent\HasChatEvent;
 use Myckhel\ChatSystem\Traits\Config;
+use Myckhel\ChatSystem\Contracts\IConversation;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Conversation extends Model
+class Conversation extends Model implements IConversation
 {
   use HasFactory, HasChatEvent, Config;
   protected $fillable = ['user_id', 'name', 'type'];
@@ -63,14 +66,14 @@ class Conversation extends Model
     $q->whereHas('participants', fn ($q) => $q->where('user_id', '!=', $user->id ?? $user));
   }
 
-  public function participants(){
+  public function participants(): HasMany {
     return $this->hasMany(self::config('models.conversation_user'));
   }
-  public function participant($user = null){
+  public function participant($user = null): HasOne {
     return $this->hasOne(self::config('models.conversation_user'))->latest()
     ->when($user, fn ($q) => $q->whereUserId($user->id ?? $user));
   }
-  public function otherParticipant($user = null){
+  public function otherParticipant($user = null): HasOne {
     $user_id = $user->id ?? $user ?? auth()->user()->id ?? null;
     return $this->hasOne(self::config('models.conversation_user'))->latest()
     ->where('user_id', '!=', $user_id);
