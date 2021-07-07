@@ -1,7 +1,6 @@
 <?php
 namespace Myckhel\ChatSystem\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use ChatEventMaker;
