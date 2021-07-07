@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Myckhel\ChatSystem\Contracts\ChatEventMaker;
 use Myckhel\ChatSystem\Database\Factories\ChatEventFactory;
 use Myckhel\ChatSystem\Traits\Config;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Myckhel\ChatSystem\Contracts\IChatEvent;
 
-class ChatEvent extends Model
+class ChatEvent extends Model implements IChatEvent
 {
     use HasFactory, Config;
     protected $fillable = ['maker_id', 'maker_type', 'made_id', 'made_type', 'type', 'all', 'created_at'];
@@ -26,11 +28,11 @@ class ChatEvent extends Model
     function scopeNotMessanger($q, $userId) {
       $q->whereDoesntHave('message', fn($q) => $q->whereUserId($userId));
     }
-    function message() {
+    function message(): BelongsTo {
       $message = self::config('models.message');
       return $this->belongsTo($message, 'made_id')->whereMadeType($message);
     }
-    function conversation() {
+    function conversation(): BelongsTo {
       $conversation = self::config('models.conversation');
       return $this->belongsTo($conversation, 'made_id')->whereMadeType($conversation);
     }

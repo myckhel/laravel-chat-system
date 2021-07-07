@@ -11,6 +11,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Myckhel\ChatSystem\Models\Message;
 use Myckhel\ChatSystem\Traits\Config;
+use Myckhel\ChatSystem\Contracts\IChatEvent;
 
 class Events implements ShouldBroadcast
 {
@@ -23,7 +24,7 @@ class Events implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($event){
+    public function __construct(IChatEvent $event){
       $this->event = $event;
       if (
         $event->type == 'delete'

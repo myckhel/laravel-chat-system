@@ -2,7 +2,7 @@
 
 namespace Myckhel\ChatSystem\Observers;
 
-use Myckhel\ChatSystem\Models\ChatEvent;
+use Myckhel\ChatSystem\Contracts\IChatEvent;
 use Myckhel\ChatSystem\Events\Message\Events;
 
 class ChatEventObserver
@@ -10,10 +10,10 @@ class ChatEventObserver
     /**
      * Handle the ChatEvent "created" event.
      *
-     * @param  \Myckhel\ChatSystem\Models\ChatEvent  $chatEvent
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEvent  $chatEvent
      * @return void
      */
-    public function created(ChatEvent $chatEvent)
+    public function created(IChatEvent $chatEvent)
     {
       if ($chatEvent->type == 'delete') {
         broadcast(new Events($chatEvent));
@@ -25,10 +25,10 @@ class ChatEventObserver
     /**
      * Handle the ChatEvent "updated" event.
      *
-     * @param  \Myckhel\ChatSystem\Models\ChatEvent  $chatEvent
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEvent  $chatEvent
      * @return void
      */
-    public function updated(ChatEvent $chatEvent)
+    public function updated(IChatEvent $chatEvent)
     {
       if ($chatEvent->isDirty('created_at')) {
         if ($chatEvent->type == 'delete') {
@@ -42,10 +42,10 @@ class ChatEventObserver
     /**
      * Handle the ChatEvent "deleted" event.
      *
-     * @param  \Myckhel\ChatSystem\Models\ChatEvent  $chatEvent
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEvent  $chatEvent
      * @return void
      */
-    public function deleted(ChatEvent $chatEvent)
+    public function deleted(IChatEvent $chatEvent)
     {
         //
     }
@@ -53,10 +53,10 @@ class ChatEventObserver
     /**
      * Handle the ChatEvent "restored" event.
      *
-     * @param  \Myckhel\ChatSystem\Models\ChatEvent  $chatEvent
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEvent  $chatEvent
      * @return void
      */
-    public function restored(ChatEvent $chatEvent)
+    public function restored(IChatEvent $chatEvent)
     {
         //
     }
@@ -64,10 +64,10 @@ class ChatEventObserver
     /**
      * Handle the ChatEvent "force deleted" event.
      *
-     * @param  \Myckhel\ChatSystem\Models\ChatEvent  $chatEvent
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEvent  $chatEvent
      * @return void
      */
-    public function forceDeleted(ChatEvent $chatEvent)
+    public function forceDeleted(IChatEvent $chatEvent)
     {
         //
     }
