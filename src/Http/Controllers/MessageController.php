@@ -97,7 +97,7 @@ class MessageController extends Controller
         'other_user_id'   => ['int', Rule::requiredIf(fn () => !$request->conversation_id)],
         'message'         => '',
         'reply_id'        => 'int',
-        'token'           => 'string',
+        'token'           => '',
         'reply_type'      => [
           Rule::requiredIf(fn () => $request->reply_id),
           "in:".Config::config('models.message'),
