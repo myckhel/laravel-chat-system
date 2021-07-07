@@ -22,8 +22,12 @@ $middlewares  = Config::config('route.middlewares');
 $prefix       = Config::config('route.prefix');
 
 Route::group(['prefix' => $prefix, 'middleware' => $middlewares], function(){
-  Route::get('conversations/count', [ConversationController::class, 'count']);
+  // conversations
+  Route::get('conversations/count',                   [ConversationController::class, 'count']);
+  Route::post('conversations/{conversation}/join',    [ConversationController::class, 'join']);
+  // messages
   Route::delete('messages',         [MessageController::class, 'delete']);
+  // apiResources
   Route::apiResources([
     'conversations'         =>  ConversationController::class,
     'messages'              =>  MessageController::class,

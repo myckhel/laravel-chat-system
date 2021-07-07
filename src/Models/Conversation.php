@@ -13,6 +13,7 @@ use Myckhel\ChatSystem\Traits\Config;
 use Myckhel\ChatSystem\Contracts\IConversation;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Myckhel\ChatSystem\Contracts\ChatEventMaker;
 
 class Conversation extends Model implements IConversation
 {
@@ -20,6 +21,22 @@ class Conversation extends Model implements IConversation
   protected $fillable = ['user_id', 'name', 'type'];
   protected $casts    = ['user_id' => 'int'];
   protected $hidden   = ['pivot'];
+
+  function addParticipant(ChatEventMaker $user, String $message = 'Someone joined the conversation') {
+    $participant = ['user_id' => $user->getKey()];
+    $participant = $this->participants()->firstOrCreate($participant, $participant);
+
+    $participant->wasRecentlyCreated && $this->createMessageActivity([
+        'user_id' => $user->getKey(),
+        'message' => $message,
+      ]);
+
+    return $participant;
+  }
+
+  protected function createMessageActivity(Array $create) {
+    return $this->messages()->create($create + ['type'    => 'activity']);
+  }
 
   protected static function newFactory(){
     return ConversationFactory::new();
