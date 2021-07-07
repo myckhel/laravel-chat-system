@@ -9,6 +9,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Myckhel\ChatSystem\Traits\Config;
+use Myckhel\ChatSystem\Contracts\IMessage;
 
 class Created implements ShouldBroadcast
 {
@@ -21,7 +22,7 @@ class Created implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($message){
+    public function __construct(IMessage $message){
       $this->message = $message;
       $this->broadcastQueue = Config::config("queues.events.message.created");
     }

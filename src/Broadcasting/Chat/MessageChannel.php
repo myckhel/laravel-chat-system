@@ -2,7 +2,7 @@
 
 namespace Myckhel\ChatSystem\Broadcasting\Chat;
 
-use Myckhel\ChatSystem\Models\Message;
+use Myckhel\ChatSystem\Contracts\IMessage;
 
 class MessageChannel
 {
@@ -22,7 +22,7 @@ class MessageChannel
      * @param  \User  $user
      * @return array|bool
      */
-    public function join($user, Message $message)
+    public function join($user, IMessage $message)
     {
       return $user->relatedToMessage($message);
     }

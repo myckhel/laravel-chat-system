@@ -4,6 +4,7 @@ namespace Myckhel\ChatSystem\Traits\Message;
 use Myckhel\ChatSystem\Jobs\Chat\MakeEvent;
 use Myckhel\ChatSystem\Traits\Config;
 use Myckhel\ChatSystem\Contracts\IConversation;
+use Myckhel\ChatSystem\Contracts\IMessage;
 
 /**
  *
@@ -70,7 +71,7 @@ trait HasMessage
       ->when($otherUser, fn ($q) => $q->whereHas('participants', fn ($q) => $q->whereUserId($otherUser->id ?? $otherUser)));
   }
 
-  function relatedToMessage($message) {
+  function relatedToMessage(IMessage $message) {
     return $this->id === $message->user_id || !!$message->participants($this->id)->first();
   }
   function relatedToConversation(IConversation $conversation) {
