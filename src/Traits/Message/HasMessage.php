@@ -1,7 +1,6 @@
 <?php
 namespace Myckhel\ChatSystem\Traits\Message;
 
-use Myckhel\ChatSystem\Models\Conversation;
 use Myckhel\ChatSystem\Jobs\Chat\MakeEvent;
 use Myckhel\ChatSystem\Traits\Config;
 
@@ -43,7 +42,7 @@ trait HasMessage
           )->whereReply($reply)->latest();
       }
     } else {
-      $conversation = Conversation::whereType($type)
+      $conversation = self::config('models.conversation')::whereType($type)
         ->when($conversation, fn ($q) => $q->whereId($conversation->id ?? $conversation))
         ->first();
 
