@@ -91,4 +91,8 @@ class ConversationPolicy
     {
         //
     }
+
+    function join(ChatEventMaker $user, IConversation $conversation) {
+      return $conversation->type != 'private';
+    }
 }
