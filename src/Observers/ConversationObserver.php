@@ -2,17 +2,17 @@
 
 namespace Myckhel\ChatSystem\Observers;
 
-use Myckhel\ChatSystem\Models\Conversation;
+use Myckhel\ChatSystem\Contracts\IConversation;
 
 class ConversationObserver
 {
     /**
      * Handle the conversation "created" event.
      *
-     * @param  \Myckhel\ChatSystem\Models\Conversation  $conversation
+     * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
      * @return void
      */
-    public function created(Conversation $conversation)
+    public function created(IConversation $conversation)
     {
      // $conversation->participants()->create([
        // 'user_id' => $conversation->author->id
@@ -22,10 +22,10 @@ class ConversationObserver
     /**
      * Handle the conversation "updated" event.
      *
-     * @param  \Myckhel\ChatSystem\Models\Conversation  $conversation
+     * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
      * @return void
      */
-    public function updated(Conversation $conversation)
+    public function updated(IConversation $conversation)
     {
         //
     }
@@ -33,10 +33,10 @@ class ConversationObserver
     /**
      * Handle the conversation "deleted" event.
      *
-     * @param  \Myckhel\ChatSystem\Models\Conversation  $conversation
+     * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
      * @return void
      */
-    public function deleted(Conversation $conversation)
+    public function deleted(IConversation $conversation)
     {
         //
     }
@@ -44,10 +44,10 @@ class ConversationObserver
     /**
      * Handle the conversation "restored" event.
      *
-     * @param  \Myckhel\ChatSystem\Models\Conversation  $conversation
+     * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
      * @return void
      */
-    public function restored(Conversation $conversation)
+    public function restored(IConversation $conversation)
     {
         //
     }
@@ -55,10 +55,10 @@ class ConversationObserver
     /**
      * Handle the conversation "force deleted" event.
      *
-     * @param  \Myckhel\ChatSystem\Models\Conversation  $conversation
+     * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
      * @return void
      */
-    public function forceDeleted(Conversation $conversation)
+    public function forceDeleted(IConversation $conversation)
     {
         //
     }

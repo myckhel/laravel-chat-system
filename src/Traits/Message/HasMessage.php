@@ -3,6 +3,8 @@ namespace Myckhel\ChatSystem\Traits\Message;
 
 use Myckhel\ChatSystem\Jobs\Chat\MakeEvent;
 use Myckhel\ChatSystem\Traits\Config;
+use Myckhel\ChatSystem\Contracts\IConversation;
+use Myckhel\ChatSystem\Contracts\IMessage;
 
 /**
  *
@@ -11,7 +13,7 @@ trait HasMessage
 {
   use Config;
 
-  function messages($conversation = null, $otherUser = null, Array $reply = [], $type = 'private'){
+  function messages(IConversation|int $conversation = null, $otherUser = null, Array $reply = [], $type = 'private'){
     if ($type == 'private') {
       if ($conversation || $otherUser) {
         $conversation = $this->conversations($conversation, $otherUser)->first();
@@ -60,7 +62,7 @@ trait HasMessage
       ->latest();
   }
 
-  function conversations($conversation = null, $otherUser = null, array $type = []){
+  function conversations(IConversation|int $conversation = null, $otherUser = null, array $type = []){
     return $this->belongsToMany(
         self::config('models.conversation'), 'conversation_users'
       )->withTimestamps()
@@ -69,10 +71,10 @@ trait HasMessage
       ->when($otherUser, fn ($q) => $q->whereHas('participants', fn ($q) => $q->whereUserId($otherUser->id ?? $otherUser)));
   }
 
-  function relatedToMessage($message) {
+  function relatedToMessage(IMessage $message) {
     return $this->id === $message->user_id || !!$message->participants($this->id)->first();
   }
-  function relatedToConversation($conversation) {
+  function relatedToConversation(IConversation $conversation) {
     return $this->id === $conversation->user_id || !!$conversation->participant($this->id)->first();
   }
 }

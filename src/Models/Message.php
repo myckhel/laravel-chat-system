@@ -13,8 +13,11 @@ use Myckhel\ChatSystem\Traits\ChatEvent\HasChatEvent;
 use Myckhel\ChatSystem\Contracts\ChatEventMaker;
 use Myckhel\ChatSystem\Database\Factories\MessageFactory;
 use Myckhel\ChatSystem\Traits\Config;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Myckhel\ChatSystem\Contracts\IMessage;
 
-class Message extends Model
+class Message extends Model implements IMessage
 {
     use HasFactory, HasChatEvent, Config;
     protected $fillable = ['conversation_id', 'user_id', 'reply_id', 'reply_type', 'message', 'type', 'metas'];
@@ -136,11 +139,11 @@ class Message extends Model
       );
     }
 
-    public function conversation(){
+    public function conversation(): BelongsTo {
       return $this->belongsTo(self::config('models.conversation'));
     }
 
-    function chatEvents(Bool $distinctType = true){
+    function chatEvents(Bool $distinctType = true): MorphMany {
       return $this->morphMany(self::config('models.chat_event'), 'made')
       ->when($distinctType, fn ($q) => $q->distinct('type'))
       ->latest();
@@ -150,23 +153,12 @@ class Message extends Model
     //   return $this->morphOne(Media::class, 'model')->latest();
     // }
 
-    public function sender(){
+    public function sender(): BelongsTo {
       return $this->belongsTo(self::config('models.user'), 'user_id');
     }
 
     public function reply(): MorphTo {
       return $this->morphTo();
-    }
-
-    public function registerMediaCollections(): void{
-      $this->addMediaCollection('image')
-      ->acceptsMimeTypes($this->mimes)
-      ->singleFile()->useDisk('msg_images')
-      ->registerMediaConversions($this->convertionCallback(true));
-
-      $this->addMediaCollection('videos')
-      ->acceptsMimeTypes($this->v_mimes)->useDisk('msg_videos')
-      ->registerMediaConversions($this->videoConvertionCallback());
     }
 
     public function newCollection(array $models = Array()){

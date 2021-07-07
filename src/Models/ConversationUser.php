@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Myckhel\ChatSystem\Database\Factories\ConversationUserFactory;
 use Myckhel\ChatSystem\Traits\Config;
+use Myckhel\ChatSystem\Contracts\IConversationUser;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ConversationUser extends Model
+class ConversationUser extends Model implements IConversationUser
 {
     use HasFactory, Config;
     protected $fillable = ['conversation_id', 'user_id'];
@@ -18,10 +20,10 @@ class ConversationUser extends Model
       return ConversationUserFactory::new();
     }
 
-    function user() {
+    function user(): BelongsTo {
       return $this->belongsTo(self::config('models.user'));
     }
-    function conversation() {
+    function conversation(): BelongsTo {
       return $this->belongsTo(Conversation::class);
     }
 }
