@@ -26,7 +26,7 @@ class Message extends Model implements IMessage
     protected $appends  = ['isSender'];
     protected $hidden   = ['media'];
 
-    function scopeWhereNotSender($q, $user = null) {
+    function scopeWhereNotSender($q, ChatEventMaker|int $user = null) {
       $user_id = $user->id ?? $user ?? auth()->user()->id;
       $q->where('user_id', '!=', $user_id);
     }
@@ -44,7 +44,7 @@ class Message extends Model implements IMessage
       return MessageFactory::new();
     }
 
-    function scopeNotMsgEvents($q, $type = null, $user = null, $conversationScope = null) {
+    function scopeNotMsgEvents($q, $type = null, ChatEventMaker|int $user = null, $conversationScope = null) {
       $user_id = $user->id ?? $user ?? auth()->user()->id;
 
       $q->whereHas('conversation', fn ($q) =>
@@ -56,7 +56,7 @@ class Message extends Model implements IMessage
       );
     }
 
-    function scopeWhereRelatedToUser($q, $user = null) {
+    function scopeWhereRelatedToUser($q, ChatEventMaker|int $user) {
       $q->whereHas('conversation', fn ($q) =>
         $q->whereHas('participants', fn ($q) => $q->whereUserId($user->id ?? $user))
       );
@@ -74,10 +74,6 @@ class Message extends Model implements IMessage
       );
     }
 
-    function getSystemAttribute() {
-      return $this->id < 100;
-    }
-
     function scopeWhereConversationWasntDeleted($q, ChatEventMaker $by = null) {
       $q->whereDoesntHave('conversation', fn ($q) =>
         $q->whereHas('chatEvents', fn ($q) =>
@@ -93,11 +89,7 @@ class Message extends Model implements IMessage
       return $user_id === $this->user_id;
     }
 
-    function makeDelete($user, $all = false) {
-      return $this->makeChatEvent($user, 'delete', $all);
-    }
-
-    function participantsHasDeleted($maker_id = null){
+    function participantsHasDeleted(int $maker_id = null){
       [$participantsCount, $deleteEventsCount] = [
         $this->conversation->participants()->count(),
         $this->chatEvents(false)->whereType('delete')
@@ -107,14 +99,18 @@ class Message extends Model implements IMessage
       return $deleteEventsCount == $participantsCount-1;
     }
 
-    function makeRead($user) {
+    function makeDelete(ChatEventMaker $user, $all = false) {
+      return $this->makeChatEvent($user, 'delete', $all);
+    }
+
+    function makeRead(ChatEventMaker $user) {
       return $this->makeChatEvent($user, 'read');
     }
-    function makeDelivered($user) {
+    function makeDelivered(ChatEventMaker $user) {
       return $this->makeChatEvent($user, 'deliver');
     }
 
-    private function makeChatEvent($user, $type = 'read', $all = false) {
+    private function makeChatEvent(ChatEventMaker $user, $type = 'read', $all = false) {
       $create = [
         'made_id'    => $this->id,
         'made_type'  => $this::class,
@@ -132,7 +128,7 @@ class Message extends Model implements IMessage
     //   );
     // }
 
-    public function participants($user = null){
+    public function participants(ChatEventMaker|int $user = null){
       $user_id = $user->id ?? $user ?? null;
       return self::config('models.conversation_user')::whereHas('conversation', fn ($q) =>
         $q->whereId($this->conversation_id)->whereHas('participants', fn ($q) => $q->when($user_id, fn ($q) => $q->whereUserId($user_id)))
