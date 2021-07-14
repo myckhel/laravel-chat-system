@@ -31,6 +31,7 @@ class ConversationController extends Controller
       ->whereHasLastMessage($user)
       ->withCount([
         'messages as latest_message_at' => fn ($q) => $q->select(DB::raw('max(created_at)')),
+        'participant as isParticipant'  => fn ($q) => $q->whereUserId($user->id),
         'unread',
       ])
       ->orderByDesc('latest_message_at')
