@@ -1,5 +1,7 @@
 <?php
 
 it('test BasicTest', function () {
-    $this->assertTrue(true);
+  $this
+        ->getJson('api/messages')
+        ->assertSuccessful();
 });
