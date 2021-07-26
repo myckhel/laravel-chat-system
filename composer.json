@@ -14,19 +14,17 @@
     "require": {
         "php": "^8.0",
         "illuminate/support": "~7|~8",
-        "nesbot/carbon": "^2.36.0"
+        "nesbot/carbon": "^2.50"
     },
     "scripts": {
-      "test": "vendor/bin/phpunit",
-      "post-autoload-dump": [
-        "@php vendor/bin/testbench package:discover --ansi"
-      ]
+      "test": "./vendor/bin/pest"
     },
     "require-dev": {
         "php": "^8",
         "fakerphp/faker": "^1.12",
-        "phpunit/phpunit": "~9.0",
-        "orchestra/testbench": "~5|~6"
+        "orchestra/testbench": "~5|~6",
+        "pestphp/pest": "^1.11",
+        "spatie/pest-plugin-test-time": "^1.0"
     },
     "autoload": {
         "psr-4": {

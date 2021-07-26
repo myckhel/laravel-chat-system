@@ -1,11 +1,5 @@
 <?php
-namespace Myckhel\ChatSystem\Tests;
 
-class BasicTest extends TestCase
-{
-  /** @test */
-  public function testBasicTest(): void
-  {
+it('test BasicTest', function () {
     $this->assertTrue(true);
-  }
-}
+});
