@@ -8,9 +8,6 @@ use Laravel\Octane\Facades\Octane;
 class ChatSystem
 {
   use Config;
-  static function hello() {
-    return 'hello-world';
-  }
 
   static function registerPolicies() {
     Gate::guessPolicyNamesUsing(function ($modelClass) {
@@ -19,10 +16,16 @@ class ChatSystem
     });
   }
 
-  static function registerObservers() {
-    self::config('models.chat_event')
+  static function registerObservers(array $exclude = []) {
+    @[
+      'chat_event' => $chat_event,
+      'conversation' => $conversation
+    ] = $exclude;
+
+    $chat_event != true && self::config('models.chat_event')
       ::observe(self::config('observers.models.chat_event'));
-    self::config('models.conversation')
+
+    $conversation !== true && self::config('models.conversation')
       ::observe(self::config('observers.models.conversation'));
   }
 
