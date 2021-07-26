@@ -22,6 +22,30 @@ class Conversation extends Model implements IConversation
   protected $casts    = ['user_id' => 'int'];
   protected $hidden   = ['pivot'];
 
+  /**
+   * Creates a message with token.
+   *
+   * @param string|int $token
+   * @param array $message
+   * @return Myckhel\ChatSystem\Models\Message
+   */
+  function createMessageWithToken($token, array $message) {
+    return $this->messages()
+      ->when(
+        $token,
+        fn ($q) => $q->where('metas->token', $token),
+        fn ($q) => $q->whereNull('id')
+      )
+      ->firstOrCreate([], $message + ['metas' => $token ? ['token' => $token] : null]);
+  }
+
+  /**
+   * Adds a user as participant of the conversaton.
+   *
+   * @param Myckhel\ChatSystem\Contracts\ChatEventMaker $user
+   * @param string $message
+   * @return Myckhel\ChatSystem\Models\ConversationUser
+   */
   function addParticipant(ChatEventMaker $user, String $message = 'Someone joined the conversation') {
     $participant = ['user_id' => $user->getKey()];
     $participant = $this->participants()->firstOrCreate($participant, $participant);
@@ -34,6 +58,13 @@ class Conversation extends Model implements IConversation
     return $participant;
   }
 
+  /**
+   * Removes a user as participant of the conversaton.
+   *
+   * @param Myckhel\ChatSystem\Contracts\ChatEventMaker $user
+   * @param string $message
+   * @return bool|null
+   */
   function removeParticipant(ChatEventMaker $user, String $message = 'Someone left the conversation') {
     $participant = ['user_id' => $user->getKey()];
     $participant = $this->participants()->whereUserId($user->getKey())->first();
@@ -44,14 +75,20 @@ class Conversation extends Model implements IConversation
     return $participant?->delete();
   }
 
-  protected function createMessageActivity(Array $create) {
-    return $this->messages()->create($create + ['type'    => 'activity']);
+  protected function createMessageActivity(Array $message) {
+    return $this->messages()->create($message + ['type'    => 'activity']);
   }
 
   protected static function newFactory(){
     return ConversationFactory::new();
   }
 
+  /**
+   * Adds query where conversation has latest message where message is not a system message.
+   *
+   * @param Myckhel\ChatSystem\Contarcts\ChatEventMaker $user
+   * @return QueryBuilder
+   */
   function scopeWhereHasLastMessage($q, $user = null) {
     $q->whereHas('last_message', fn ($q) =>
       $q->where('type', '!=', 'system')
@@ -89,6 +126,12 @@ class Conversation extends Model implements IConversation
     return $this->hasOne(self::config('models.message'))->latest();
   }
 
+  /**
+   * Adds query where conversation doesn't have the given user as a participant.
+   *
+   * @param Myckhel\ChatSystem\Contarcts\ChatEventMaker $user
+   * @return QueryBuilder
+   */
   function scopeWhereNotParticipant($q, $user) {
     $q->whereHas('participants', fn ($q) => $q->where('user_id', '!=', $user->id ?? $user));
   }
@@ -96,16 +139,23 @@ class Conversation extends Model implements IConversation
   public function participants(): HasMany {
     return $this->hasMany(self::config('models.conversation_user'));
   }
+
   public function participant($user = null): HasOne {
     return $this->hasOne(self::config('models.conversation_user'))->latest()
-    ->when($user, fn ($q) => $q->whereUserId($user->id ?? $user));
-  }
-  public function otherParticipant($user = null): HasOne {
-    $user_id = $user->id ?? $user ?? auth()->user()->id ?? null;
-    return $this->hasOne(self::config('models.conversation_user'))->latest()
-    ->where('user_id', '!=', $user_id);
+      ->when($user, fn ($q) => $q->whereUserId($user->id ?? $user));
   }
 
+  public function otherParticipant($user = null): HasOne {
+    return $this->participant()
+      ->where('user_id', '!=', $user->id ?? $user);
+  }
+
+  public function otherParticipants($user): HasOne {
+    return $this->participants()
+      ->where('user_id', '!=', $user->id ?? $user);
+  }
+
+  // TODO investigate use
   public function participant_id(){
     return $this->participants();
   }
@@ -114,14 +164,22 @@ class Conversation extends Model implements IConversation
     return $this->hasMany(self::config('models.message'));
   }
 
-  public function unread($user = null){
-    $user_id = $user->id ?? $user ?? auth()->user()->id;
+  public function unread(int|ChatEventMaker $user = null){
+    $user_id = $user->id ?? $user ?? auth()->user()?->id;
 
-    return $this->notMsgEvents('read', $user_id)->latest()->whereNotSender($user_id);
+    return $this->notMsgEvents($user_id, 'read')->latest()
+      ->when($user_id, fn ($q) => $q->whereNotSender($user_id));
   }
 
-  function notMsgEvents($type = null, $user = null) {
-    $user_id = $user->id ?? $user ?? auth()->user()->id;
+  function undelivered(int|ChatEventMaker $user = null){
+    $user_id = $user->id ?? $user ?? auth()->user()?->id;
+
+    return $this->notMsgEvents($user_id, 'deliver')
+    ->where('user_id', '!=', $user_id);
+  }
+
+  function notMsgEvents(int|ChatEventMaker $user, $type = null) {
+    $user_id = $user->id ?? $user;
 
     return $this->messages()
     ->whereHas('conversation', fn ($q) =>
@@ -131,13 +189,6 @@ class Conversation extends Model implements IConversation
         ->whereColumn('created_at', '>', 'messages.created_at')
       )
     );
-  }
-
-  function undelivered($user = null){
-    $user_id = $user->id ?? $user ?? auth()->user()->id;
-
-    return $this->notMsgEvents('deliver', $user_id)
-    ->where('user_id', '!=', $user_id);
   }
 
   public function author(){
@@ -150,16 +201,17 @@ class Conversation extends Model implements IConversation
 }
 
 class ConversationCollection extends Collection {
-  function makeDelivered($user = null){
-    $user = $user ?? auth()->user() ?? null;
+  function makeDelivered(ChatEventMaker $user){
+    $user = $user ?? null;
     MakeEvent::dispatch($user, 'deliver', $this)->afterResponse();
     return $this;
   }
 
+  // TODO investigate use
   function undelivered($user = null){
     $user_id = $user->id ?? $user ?? auth()->user()->id;
 
-    return $this->notMsgEvents('deliver', $user_id)
+    return $this->notMsgEvents($user_id, 'deliver')
     ->where('user_id', '!=', $user_id);
   }
 }
