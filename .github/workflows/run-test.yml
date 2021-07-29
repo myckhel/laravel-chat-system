@@ -1,6 +1,10 @@
 name: run-tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
 
 jobs:
   test:
@@ -10,7 +14,8 @@ jobs:
       matrix:
         php: [8.0]
         laravel: [8.*]
-        dependency-version: [prefer-lowest, prefer-stable]
+        dependency-version: [prefer-stable]
+        # dependency-version: [prefer-lowest, prefer-stable]
         include:
           - laravel: 8.*
             testbench: 6.*
