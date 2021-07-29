@@ -23,9 +23,11 @@ class ConversationSeeder extends Seeder
       $faker = Faker::create();
       $users = $userModel::pluck($user_key)->toArray();
       $conversationModel::factory()->count($faker->numberBetween(min(100, count($users)), count($users)))
-      ->hasParticipants($faker->numberBetween(2, 4), fn ($attributes, $conversation) =>
+      ->hasParticipants($faker->numberBetween(3, 5), fn ($attributes, $conversation) =>
         [
-          'user_id' => $faker->randomElement($users),
+          'user_id' => $faker->randomElement(
+            collect($users)->filter(fn ($id) => $id != $conversation->user_id)
+          ),
           'conversation_id' => $conversation->id,
         ]
       )
@@ -34,7 +36,10 @@ class ConversationSeeder extends Seeder
           'conversation_id' => $conversation->id,
           'user_id' => $faker->randomElement([
             $conversation->author->id,
-            $conversation->query()->whereNotParticipant($conversation->author)
+            $conversation
+              ->query()
+              ->whereNotParticipant($conversation->author)
+              ->inRandomOrder()
               ->first()->user_id,
           ])
         ]
