@@ -23,6 +23,30 @@ class Conversation extends Model implements IConversation
   protected $hidden   = ['pivot'];
 
   /**
+   * Reply a message.
+   *
+   * @param array $message
+   * @return Myckhel\ChatSystem\Models\Message
+   */
+  function replyMessage(Message|int $reply, array $message) {
+    return $this
+      ->messages()
+      ->create(['reply_id' => $reply->id ?? $reply] + $message);
+  }
+
+  /**
+   * Creates a message.
+   *
+   * @param array $message
+   * @return Myckhel\ChatSystem\Models\Message
+   */
+  function createMessage(array $message) {
+    return $this
+      ->messages()
+      ->create($message);
+  }
+
+  /**
    * Creates a message with token.
    *
    * @param string|int $token
