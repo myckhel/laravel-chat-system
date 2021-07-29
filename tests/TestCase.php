@@ -16,7 +16,7 @@ class TestCase extends Orchestra
     $this->setUpDatabase();
 
     Factory::guessFactoryNamesUsing(
-      fn (string $modelName) => 'Myckhel\\ChatSystem\\Database\\Factories\\'.explode("\\", $modelName)[0].'Factory'
+      fn (string $modelName) => 'Myckhel\\ChatSystem\\Database\\Factories\\'.class_basename($modelName).'Factory'
     );
 
     $this->seed(ConversationSeeder::class);
@@ -58,7 +58,7 @@ class TestCase extends Orchestra
   protected function seedModels(...$modelClasses)
   {
     collect($modelClasses)->each(function (string $modelClass) {
-      foreach (range(5, 0) as $index) {
+      foreach (range(10, 0) as $index) {
         $modelClass::create(['name' => "name {$index}"]);
       }
     });
