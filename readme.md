@@ -21,7 +21,7 @@ $ composer require myckhel/laravel-chat-system
 ### **[Documentaion](https://myckhel.github.io/laravel-chat-system)**
 
 ## `Postman Documentaion`
-### **[Postman Documentaion](https://documenter.getpostman.com/view/9558301/TzXwEyDq#83bc243b-8297-417d-9fd8-18a557e4826e)**
+### **[Postman Documentaion](https://documenter.getpostman.com/view/9558301/TzXwEyDq)**
 
 ## `Example`
 ### **[Demo](https://laravel-chat-system.herokuapp.com)**
