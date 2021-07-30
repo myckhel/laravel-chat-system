@@ -23,9 +23,13 @@ $ composer require myckhel/laravel-chat-system
 ## `Postman Documentaion`
 ### **[Postman Documentaion](https://documenter.getpostman.com/view/9558301/TzXwEyDq)**
 
-## `Example`
-### **[Demo](https://laravel-chat-system.herokuapp.com)**
-### **[Source](https://github.com/myckhel/chat-system-example)**
+## `Examples`
+### Laravel Inertia React 
+#### **[Demo](https://laravel-chat-system.herokuapp.com)**
+#### **[Source](https://github.com/myckhel/chat-system-example)**
+
+### Expo Snack
+#### **[Demo](https://snack.expo.dev/@myckhel/laravel-chat-system)**
 
 ## `Usage`
 
