@@ -113,24 +113,24 @@ class Conversation extends Model implements IConversation
    * @param Myckhel\ChatSystem\Contarcts\ChatEventMaker $user
    * @return QueryBuilder
    */
-  function scopeWhereHasLastMessage($q, $user = null) {
+  function scopeWhereHasLastMessage($q, ChatEventMaker $user = null) {
     $q->whereHas('last_message', fn ($q) =>
       $q->where('type', '!=', 'system')
       ->whereConversationWasntDeleted($user)
     );
   }
 
-  function makeDelete($user = null, $row = false, $all = false) {
+  function makeDelete(ChatEventMaker $user = null, $row = false, $all = false) {
     return $this->makeChatEvent($user, 'delete', $row, $all);
   }
-  function makeRead($user = null, $row = true, $all = false) {
+  function makeRead(ChatEventMaker $user = null, $row = true, $all = false) {
     return $this->makeChatEvent($user, 'read', $row, $all);
   }
-  function makeDelivery($user = null, $row = true, $all = false) {
+  function makeDelivery(ChatEventMaker $user = null, $row = true, $all = false) {
     return $this->makeChatEvent($user, 'deliver', $row, $all);
   }
 
-  private function makeChatEvent($user, $type = 'delete', $row = false, $all = false) {
+  private function makeChatEvent(ChatEventMaker $user, $type = 'delete', $row = false, $all = false) {
     $create = [
       'made_id'    => $this->id,
       'made_type'  => $this::class,
@@ -174,14 +174,9 @@ class Conversation extends Model implements IConversation
       ->where('user_id', '!=', $user->id ?? $user);
   }
 
-  public function otherParticipants($user): HasOne {
+  public function otherParticipants($user = null): HasMany {
     return $this->participants()
       ->where('user_id', '!=', $user->id ?? $user);
-  }
-
-  // TODO investigate use
-  public function participant_id(){
-    return $this->participants();
   }
 
   public function messages(){
@@ -206,6 +201,7 @@ class Conversation extends Model implements IConversation
     $user_id = $user->id ?? $user;
 
     return $this->messages()
+    ->whereType('user')
     ->whereHas('conversation', fn ($q) =>
       $q->whereDoesntHave('chatEvents', fn ($q) =>
         $q->latest()->whereMakerId($user_id)
