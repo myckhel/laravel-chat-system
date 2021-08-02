@@ -1,11 +1,18 @@
 <?php
 use Myckhel\ChatSystem\Models\Conversation;
 use Carbon\Carbon;
+use Myckhel\ChatSystem\Tests\Models\User;
 
 beforeEach(function() {
   $this->conversation = Conversation::inRandomOrder()->first();
   $this->user_id = $this->conversation->user_id;
   $this->message = $this->conversation->messages()->latest()->first();
+  $this->chatEvent = [
+    'maker_type'  => $this->conversation->author::class,
+    'maker_id'    => $this->conversation->user_id,
+    'made_type'   => Conversation::class,
+    'made_id'     => $this->conversation->id,
+  ];
 });
 
 it('creates a message', function() {
@@ -97,4 +104,117 @@ it('adds/removes participant to/from conversation', function() {
 
   expect($remove)->toBe(true);
   expect($participantsRemovedCount)->toBe($participantsCount);
+});
+
+it('can  make a read event', function() {
+  $readEvent = $this->conversation->makeRead($this->conversation->author);
+
+  expect($readEvent)->toMatchArray($this->chatEvent + ['type' => 'read']);
+
+  // TODO assert broadcast events
+});
+
+it('can  make a deliver event', function() {
+  $readEvent = $this->conversation->makeDelivery($this->conversation->author);
+
+  expect($readEvent)->toMatchArray($this->chatEvent + ['type' => 'deliver']);
+
+  // TODO assert broadcast events
+});
+
+it('can  make a delete event', function() {
+  $readEvent = $this->conversation->makeDelete($this->conversation->author);
+
+  expect($readEvent)->toMatchArray($this->chatEvent + ['type' => 'delete']);
+
+  // TODO assert broadcast events
+});
+
+/* Relationship Tests */
+
+it('has a last message', function() {
+  $user = auth()->user();
+  $conversation = $user->conversations()->create([
+    'name'    => $this->faker->name.' Group',
+    'user_id' => $user->id,
+  ]);
+
+  $fMessage = $conversation->createMessage(['user_id' => $this->user_id, 'message' => 'first message of the day']);
+  $lMessage = $conversation->createMessage(['user_id' => $this->user_id, 'message' => 'last message of the day']);
+
+  expect($conversation->last_message()->latest('id')->first()->id)->toBe($lMessage->id);
+});
+
+it('has many participants', fn () =>
+  expect($this->conversation->participants()->count())->toBeGreaterThan(0)
+);
+
+it('has one latest participant', function() {
+  $user = auth()->user();
+  $conversation = $user->conversations()->create([
+    'name'    => $this->faker->name.' Group',
+    'user_id' => $user->id,
+  ]);
+
+  $otherUser = User::create(['name' => $this->faker->name]);
+
+  $conversation->addParticipant($otherUser);
+  $participant = $conversation->participant()->latest('id')->first();
+
+  expect($participant->user_id)->toBe($otherUser->id);
+});
+
+it('has one other participant', function() {
+  $otherParticipant = $this->conversation->otherParticipant($this->user_id)->first();
+
+  expect($otherParticipant->user_id)->not->toBe($this->user_id);
+});
+
+it('has many other participants', function() {
+  $otherParticipants = $this->conversation->otherParticipants($this->user_id)->pluck('user_id');
+
+  expect(in_array($this->user_id, $otherParticipants->toArray()))->toBe(false);
+});
+
+it('has many messages', function() {
+  $this->conversation->createMessage(
+    ['user_id' => $this->user_id, 'message' => 'hello1']
+  );
+  $this->conversation->createMessage(
+    ['user_id' => $this->user_id, 'message' => 'hello2']
+  );
+
+  $count = $this->conversation->messages()->whereType('user')->count();
+
+  expect($count)->toBeGreaterThan(1);
+});
+
+it('has many unread messages', function() {
+  $user = User::create(['name' => $this->faker->name]);
+  $otherUser = User::create(['name' => $this->faker->name]);
+
+  $conversation = $user->conversations()->create([
+    'name'    => $this->faker->name.' Group',
+    'user_id' => $user->id,
+  ]);
+
+  $conversation->addParticipant($otherUser);
+
+  $participant = $conversation->participant($otherUser->id)->first();
+
+  expect($participant->user_id)->toBe($otherUser->id);
+
+  $conversation->createMessage(
+    ['user_id' => $participant->user_id, 'message' => 'otherUser message 1']
+  );
+  $conversation->createMessage(
+    ['user_id' => $participant->user_id, 'message' => 'otherUser message 2']
+  );
+  $conversation->createMessage(
+    ['user_id' => $user->id, 'message' => 'user message1']
+  );
+
+  $count = $conversation->unread($user)->count();
+
+  expect($count)->toBe(2);
 });
