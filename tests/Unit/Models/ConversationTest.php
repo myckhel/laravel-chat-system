@@ -227,3 +227,30 @@ it('has many unread messages', function() {
 
   expect($count)->toBe(2);
 });
+
+/* Collection Tests */
+
+it('should let collection make deliver events', function() {
+  Event::fake([Events::class]);
+
+  $user = User::create(['name' => $this->faker->name]);
+  $otherUser = User::create(['name' => $this->faker->name]);
+
+  $conversation = $user->conversations()->create([
+    'name'    => $this->faker->name.' Group',
+    'user_id' => $user->id,
+  ]);
+
+  $fMessage = $conversation->createMessage(['user_id' => $this->user_id, 'message' => 'first message of the day']);
+  $lMessage = $conversation->createMessage(['user_id' => $this->user_id, 'message' => 'last message of the day']);
+
+  $lMessage = $conversation->addParticipant($otherUser);
+
+  $messages = $conversation->messages()->whereType('user')->get();
+
+  $deliveredEvents = $messages->makeDelivered($otherUser);
+
+  expect(count($deliveredEvents))->toBe(2);
+
+  Event::assertDispatched(Events::class, 2);
+});
