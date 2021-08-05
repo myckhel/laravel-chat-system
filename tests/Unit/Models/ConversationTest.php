@@ -1,7 +1,10 @@
 <?php
+
 use Myckhel\ChatSystem\Models\Conversation;
 use Carbon\Carbon;
 use Myckhel\ChatSystem\Tests\Models\User;
+use Myckhel\ChatSystem\Events\Message\Events;
+use Illuminate\Support\Facades\Event;
 
 beforeEach(function() {
   $this->conversation = Conversation::inRandomOrder()->first();
@@ -106,28 +109,34 @@ it('adds/removes participant to/from conversation', function() {
   expect($participantsRemovedCount)->toBe($participantsCount);
 });
 
-it('can  make a read event', function() {
+it('can make a read event', function() {
+  Event::fake([Events::class]);
+
   $readEvent = $this->conversation->makeRead($this->conversation->author);
 
   expect($readEvent)->toMatchArray($this->chatEvent + ['type' => 'read']);
 
-  // TODO assert broadcast events
+  Event::assertDispatched(Events::class);
 });
 
-it('can  make a deliver event', function() {
+it('can make a deliver event', function() {
+  Event::fake([Events::class]);
+
   $readEvent = $this->conversation->makeDelivery($this->conversation->author);
 
   expect($readEvent)->toMatchArray($this->chatEvent + ['type' => 'deliver']);
 
-  // TODO assert broadcast events
+  Event::assertDispatched(Events::class);
 });
 
-it('can  make a delete event', function() {
+it('can make a delete event', function() {
+  Event::fake([Events::class]);
+
   $readEvent = $this->conversation->makeDelete($this->conversation->author);
 
   expect($readEvent)->toMatchArray($this->chatEvent + ['type' => 'delete']);
 
-  // TODO assert broadcast events
+  Event::assertDispatched(Events::class);
 });
 
 /* Relationship Tests */

@@ -1,6 +1,7 @@
 <?php
 
 namespace Myckhel\ChatSystem\Tests;
+use Myckhel\ChatSystem\ChatSystem;
 use Myckhel\ChatSystem\ChatSystemServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Myckhel\ChatSystem\Tests\Models\User;
@@ -18,6 +19,8 @@ class TestCase extends Orchestra
     Factory::guessFactoryNamesUsing(
       fn (string $modelName) => 'Myckhel\\ChatSystem\\Database\\Factories\\'.class_basename($modelName).'Factory'
     );
+
+    ChatSystem::registerObservers();
 
     $this->seed(ConversationSeeder::class);
   }
