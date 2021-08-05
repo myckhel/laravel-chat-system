@@ -9,5 +9,9 @@ uses(TestCase::class)
       $this->faker = Faker::create();
       $this->actingAs(User::inRandomOrder()->first());
       $this->mockUser = fn () => User::create(['name' => $this->faker->name]);
+      $this->mockConversation = fn ($user) => $user->conversations()->create([
+        'name'    => $this->faker->name.' Group',
+        'user_id' => $user->id,
+      ]);
     })
     ->in(__DIR__);

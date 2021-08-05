@@ -2,9 +2,10 @@
 
 use Myckhel\ChatSystem\Models\Conversation;
 use Carbon\Carbon;
-use Myckhel\ChatSystem\Tests\Models\User;
 use Myckhel\ChatSystem\Events\Message\Events;
+use Myckhel\ChatSystem\Jobs\Chat\MakeEvent;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Bus;
 
 beforeEach(function() {
   $this->conversation = Conversation::inRandomOrder()->first();
@@ -165,7 +166,7 @@ it('has one latest participant', function() {
     'user_id' => $user->id,
   ]);
 
-  $otherUser = User::create(['name' => $this->faker->name]);
+  $otherUser = ($this->mockUser)();
 
   $conversation->addParticipant($otherUser);
   $participant = $conversation->participant()->latest('id')->first();
@@ -199,8 +200,8 @@ it('has many messages', function() {
 });
 
 it('has many unread messages', function() {
-  $user = User::create(['name' => $this->faker->name]);
-  $otherUser = User::create(['name' => $this->faker->name]);
+  $user = ($this->mockUser)();
+  $otherUser = ($this->mockUser)();
 
   $conversation = $user->conversations()->create([
     'name'    => $this->faker->name.' Group',
@@ -214,10 +215,10 @@ it('has many unread messages', function() {
   expect($participant->user_id)->toBe($otherUser->id);
 
   $conversation->createMessage(
-    ['user_id' => $participant->user_id, 'message' => 'otherUser message 1']
+    ['user_id' => $participant->user_id, 'message' => $this->faker->sentence]
   );
   $conversation->createMessage(
-    ['user_id' => $participant->user_id, 'message' => 'otherUser message 2']
+    ['user_id' => $participant->user_id, 'message' => $this->faker->sentence]
   );
   $conversation->createMessage(
     ['user_id' => $user->id, 'message' => 'user message1']
@@ -231,26 +232,24 @@ it('has many unread messages', function() {
 /* Collection Tests */
 
 it('should let collection make deliver events', function() {
-  Event::fake([Events::class]);
+  Bus::fake();
 
-  $user = User::create(['name' => $this->faker->name]);
-  $otherUser = User::create(['name' => $this->faker->name]);
+  $user = ($this->mockUser)();
+  $otherUser = ($this->mockUser)();
 
-  $conversation = $user->conversations()->create([
-    'name'    => $this->faker->name.' Group',
-    'user_id' => $user->id,
-  ]);
+  $conversation = ($this->mockConversation)($user);
+  $conversation2 = ($this->mockConversation)($user);
 
-  $fMessage = $conversation->createMessage(['user_id' => $this->user_id, 'message' => 'first message of the day']);
-  $lMessage = $conversation->createMessage(['user_id' => $this->user_id, 'message' => 'last message of the day']);
+  $conversation->addParticipant($otherUser);
+  $conversation2->addParticipant($otherUser);
 
-  $lMessage = $conversation->addParticipant($otherUser);
+  $conversation->createMessage(['user_id' => $this->user_id, 'message' => 'first message of the day']);
+  $conversation2->createMessage(['user_id' => $this->user_id, 'message' => 'last message of the day']);
 
-  $messages = $conversation->messages()->whereType('user')->get();
-
-  $deliveredEvents = $messages->makeDelivered($otherUser);
+  $conversations = Conversation::whereIn('id', [$conversation->id, $conversation2->id])->get();
+  $deliveredEvents = $conversations->makeDelivered($otherUser);
 
   expect(count($deliveredEvents))->toBe(2);
 
-  Event::assertDispatched(Events::class, 2);
+  Bus::assertDispatched(MakeEvent::class);
 });
