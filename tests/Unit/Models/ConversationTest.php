@@ -229,6 +229,35 @@ it('has many unread messages', function() {
   expect($count)->toBe(2);
 });
 
+/* Query Tests */
+
+it('should query conversations that have at least a message', function() {
+  $user = ($this->mockUser)();
+  $otherUser = ($this->mockUser)();
+
+  $conversation = ($this->mockConversation)($user);
+  $conversation1 = ($this->mockConversation)($user);
+
+  $conversation->createMessage(
+    ['user_id' => $user->id, 'message' => $this->faker->sentence]
+  );
+
+  expect($user->conversations()->whereHasLastMessage()->count())->toBe(1);
+});
+
+it('should query for conversations that doesnt have the user as participant', function() {
+  $user = ($this->mockUser)();
+  $otherUser = ($this->mockUser)();
+
+  $conversation = ($this->mockConversation)($user);
+  $conversation1 = ($this->mockConversation)($user);
+  $conversation2 = ($this->mockConversation)($user);
+
+  $conversation->addParticipant($otherUser);
+
+  expect($user->conversations()->whereNotParticipant($otherUser)->count())->toBe(2);
+});
+
 /* Collection Tests */
 
 it('should let collection make deliver events', function() {
