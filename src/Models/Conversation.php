@@ -156,8 +156,8 @@ class Conversation extends Model implements IConversation
    * @param Myckhel\ChatSystem\Contarcts\ChatEventMaker $user
    * @return QueryBuilder
    */
-  function scopeWhereNotParticipant($q, $user) {
-    $q->whereHas('participants', fn ($q) => $q->where('user_id', '!=', $user->id ?? $user));
+  function scopeWhereNotParticipant($q, ChatEventMaker|int $user) {
+    $q->whereDoesntHave('participants', fn ($q) => $q->whereUserId($user->id ?? $user));
   }
 
   public function participants(): HasMany {
@@ -222,16 +222,7 @@ class Conversation extends Model implements IConversation
 
 class ConversationCollection extends Collection {
   function makeDelivered(ChatEventMaker $user){
-    $user = $user ?? null;
     MakeEvent::dispatch($user, 'deliver', $this)->afterResponse();
     return $this;
-  }
-
-  // TODO investigate use
-  function undelivered($user = null){
-    $user_id = $user->id ?? $user ?? auth()->user()->id;
-
-    return $this->notMsgEvents($user_id, 'deliver')
-    ->where('user_id', '!=', $user_id);
   }
 }
