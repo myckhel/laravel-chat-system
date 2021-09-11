@@ -3,8 +3,7 @@
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
-[![Build Status][ico-travis]][link-travis]
-[![StyleCI][ico-styleci]][link-styleci]
+![Tests Status](https://github.com/myckhel/laravel-chat-system/actions/workflows/laravel.yml/badge.svg)
 
 This is where your description should go. Take a look at [contributing.md](contributing.md) to see a to do list.
 
@@ -21,11 +20,15 @@ $ composer require myckhel/laravel-chat-system
 ### **[Documentaion](https://myckhel.github.io/laravel-chat-system)**
 
 ## `Postman Documentaion`
-### **[Postman Documentaion](https://documenter.getpostman.com/view/9558301/TzXwEyDq#83bc243b-8297-417d-9fd8-18a557e4826e)**
+### **[Postman Documentaion](https://documenter.getpostman.com/view/9558301/TzXwEyDq)**
 
-## `Example`
-### **[Demo](https://laravel-chat-system.herokuapp.com)**
-### **[Source](https://github.com/myckhel/chat-system-example)**
+## `Examples`
+### Laravel Inertia React 
+#### **[Demo](https://laravel-chat-system.herokuapp.com)**
+#### **[Source](https://github.com/myckhel/chat-system-example)**
+
+### Expo Snack
+#### **[Demo](https://snack.expo.dev/@myckhel/laravel-chat-system)**
 
 ## `Usage`
 
@@ -49,7 +52,7 @@ If you discover any security related issues, please email author email instead o
 
 ## `Credits`
 
-- [author name][link-author]
+- [Myckhel][link-author]
 - [All Contributors][link-contributors]
 
 ## `License`

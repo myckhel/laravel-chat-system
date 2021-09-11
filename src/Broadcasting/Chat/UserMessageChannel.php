@@ -20,8 +20,8 @@ class UserMessageChannel
      * @param  \App\User  $user
      * @return array|bool
      */
-    public function join($user, User $messagesUser)
+    public function join($user, $messageUser)
     {
-      return $user->id == $messagesUser->id;
+      return (int) $user->id == (int) $messageUser;
     }
 }
