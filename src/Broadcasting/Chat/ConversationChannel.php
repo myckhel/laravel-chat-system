@@ -22,8 +22,10 @@ class ConversationChannel
      * @param  User  $user
      * @return array|bool
      */
-    public function join($user, IConversation $conversation)
+    public function join($user, $conversation)
     {
+      $conversation = config('chat-system.models.conversation')::find($conversation);
+
       return $user->relatedToConversation($conversation);
     }
 }
