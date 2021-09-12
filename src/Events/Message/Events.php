@@ -38,7 +38,7 @@ class Events implements ShouldBroadcast
 
     public function broadcastAs()
     {
-      return "message";
+      return "Myckhel\\ChatSystem\\Events\\Message";
     }
 
     public function broadcastWhen()

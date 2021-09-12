@@ -28,7 +28,7 @@ class Created implements ShouldBroadcast
     }
 
     public function broadcastAs() {
-      return 'message';
+      return 'App\\Events\\Myckhel\\ChatSystem\\Events\\Message';
     }
 
     function broadcastWith() {
