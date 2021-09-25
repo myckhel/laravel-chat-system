@@ -62,6 +62,18 @@ class Message extends Model implements IMessage
       }
     }
 
+    function scopeWhereNotReadBy($q, ChatEventMaker|int $user) {
+      return $q->whereDoesntHaveChatEvents('read', $user);
+    }
+
+    function scopeWhereNotDeliveredTo($q, ChatEventMaker|int $user) {
+      return $q->whereDoesntHaveChatEvents('deliver', $user);
+    }
+
+    function scopeWhereNotDeletedBy($q, ChatEventMaker|int $user) {
+      return $q->whereDoesntHaveChatEvents('delete', $user);
+    }
+
     function scopeWhereRelatedToUser($q, ChatEventMaker|int $user) {
       $q->whereHas('conversation', fn ($q) =>
         $q->whereHas('participants', fn ($q) => $q->whereUserId($user->id ?? $user))
