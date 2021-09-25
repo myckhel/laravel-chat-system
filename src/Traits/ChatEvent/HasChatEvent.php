@@ -12,14 +12,17 @@ trait HasChatEvent
   function scopeWhereNotTrashed($q, $maker_id) {
     $q->whereDoesntHave('trashed', fn ($q) => $q->where('all', true)->orWhere('maker_id', $maker_id));
   }
+
   function chatEvents(){
     return $this->morphMany(self::config('models.chat_event'), 'made')
-    ->groupByRaw('`type` desc')
+    ->groupByRaw('"type" desc')
     ->orderBy('id', 'desc');
   }
+
   function chatEvent(){
     return $this->morphOne(self::config('models.chat_event'), 'made')->latest();
   }
+
   function delivery($maker = null) {
     return $this->morphOne(self::config('models.chat_event'), 'made')
     ->whereType('deliver')->latest()
@@ -28,10 +31,12 @@ trait HasChatEvent
       fn ($q) => $q->whereMakerType($maker->id)->whereMadeType(get_class($maker))
     );
   }
+
   function trashed() {
     return $this->morphOne(self::config('models.chat_event'), 'made')
     ->whereType('delete')->latest();
   }
+
   function read() {
     return $this->morphOne(self::config('models.chat_event'), 'made')
     ->whereType('read')->latest();
@@ -49,5 +54,3 @@ trait HasChatEvent
 
   }
 }
-
-?>
