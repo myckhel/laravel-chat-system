@@ -186,18 +186,18 @@ class Conversation extends Model implements IConversation
   public function unread(int|ChatEventMaker $user = null){
     $user_id = $user->id ?? $user ?? auth()->user()?->id;
 
-    return $this->notMsgEvents($user_id, 'read')->latest()
+    return $this->doesntHaveChatEvents($user_id, 'read')->latest()
       ->when($user_id, fn ($q) => $q->whereNotSender($user_id));
   }
 
   function undelivered(int|ChatEventMaker $user = null){
     $user_id = $user->id ?? $user ?? auth()->user()?->id;
 
-    return $this->notMsgEvents($user_id, 'deliver')
+    return $this->doesntHaveChatEvents($user_id, 'deliver')
     ->where('user_id', '!=', $user_id);
   }
 
-  function notMsgEvents(int|ChatEventMaker $user, $type = null) {
+  function doesntHaveChatEvents(int|ChatEventMaker $user, $type = null) {
     $user_id = $user->id ?? $user;
 
     return $this->messages()
