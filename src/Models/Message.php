@@ -44,16 +44,22 @@ class Message extends Model implements IMessage
       return MessageFactory::new();
     }
 
-    function scopeNotMsgEvents($q, $type = null, ChatEventMaker|int $user = null, $conversationScope = null) {
+    function scopeWhereDoesntHaveChatEvents($q, $type = null, ChatEventMaker|int $user = null, $conversationScope = null) {
       $user_id = $user->id ?? $user ?? auth()->user()->id;
 
-      $q->whereHas('conversation', fn ($q) =>
+      if ($type == 'delete') {
         $q->whereDoesntHave('chatEvents', fn ($q) =>
-          $q->whereMakerId($user_id)
-          ->when($type, fn ($q) => $q->whereType($type))
-          ->whereColumn('created_at', '>', 'messages.created_at')
-        )->when($conversationScope, $conversationScope)
-      );
+          $q->whereMakerId($user_id)->whereType($type)
+        );
+      } else {
+        $q->whereHas('conversation', fn ($q) =>
+          $q->whereDoesntHave('chatEvents', fn ($q) =>
+            $q->whereMakerId($user_id)
+              ->when($type, fn ($q) => $q->whereType($type))
+              ->whereColumn('created_at', '>', 'messages.created_at')
+          )->when($conversationScope, $conversationScope)
+        );
+      }
     }
 
     function scopeWhereRelatedToUser($q, ChatEventMaker|int $user) {
@@ -96,7 +102,7 @@ class Message extends Model implements IMessage
         ->when($maker_id, fn ($q) => $q->where('maker_id', '!=', $maker_id))
         ->count()
       ];
-      return $deleteEventsCount == $participantsCount-1;
+      return $deleteEventsCount == $participantsCount - 1;
     }
 
     function makeDelete(ChatEventMaker $user, $all = false) {
