@@ -25,7 +25,7 @@ class ConversationController extends Controller
 
       $eventColumns = ['id', 'maker_id', 'made_type', 'made_id', 'created_at'];
 
-      $queryEvent = fn ($q) => $q->select($eventColumns)->notMessanger($user->id);
+      $queryEvent = fn ($q) => $q->select($eventColumns)->notMessenger($user->id);
 
       $conversations = $user->conversations()
       ->whereHasLastMessage($user)
