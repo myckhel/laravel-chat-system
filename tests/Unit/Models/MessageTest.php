@@ -237,3 +237,23 @@ it('should let collection make events', function() {
 
   Event::assertDispatched(Events::class, 2 * 3);
 });
+
+/* Relationship Tests */
+
+it('belongs to a conversation', function() {
+  expect($this->message->conversation)->toHaveKeys(['id', 'name']);
+});
+
+it('have many chatEvents', function() {
+  expect($this->message->chatEvents->first())->toHaveKeys(['id', 'maker_id']);
+});
+
+it('belongs to a sender', function() {
+  expect($this->message->sender)->toHaveKeys(['id', 'name']);
+});
+
+it('belongs to a reply of a model', function() {
+  $replyMessage = $this->conversation->replyMessage($this->message, ['user_id' => $this->user_id, 'message' => $this->faker->word]);
+
+  expect($replyMessage->reply->id)->toBe($this->message->id);
+});
