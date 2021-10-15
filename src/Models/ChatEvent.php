@@ -25,8 +25,8 @@ class ChatEvent extends Model implements IChatEvent
       $q->select('*')->whereMakerId($user->id)->orWhere('all', true);
     }
 
-    function scopeNotMessanger($q, ChatEventMaker|int $user) {
-      $q->whereDoesntHave('message', fn($q) => $q->whereUserId($user->id ?? $user));
+    function scopeNotMessenger($q, ChatEventMaker|int $user) {
+      $q->whereDoesntHave('message', fn($q) => $q->whereUserId($user->id ?? $user))->whereType('user');
     }
 
     function message(): BelongsTo {
