@@ -181,18 +181,6 @@ class Message extends Model implements IMessage
 }
 
 class MessageCollection extends Collection {
-  function prependSystemMessage(...$messages) {
-    array_map(fn ($message) => $this->prepend($message), $messages);
-
-    return $this;
-  }
-
-  function appendSystemMessage(...$messages) {
-    array_map(fn ($message) => $this->push($message), $messages);
-
-    return $this;
-  }
-
   function makeRead($user = null){
     return $this->makeChatEvent($user);
   }
