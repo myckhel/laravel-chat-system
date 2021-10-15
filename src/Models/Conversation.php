@@ -31,7 +31,10 @@ class Conversation extends Model implements IConversation
   function replyMessage(Message|int $reply, array $message) {
     return $this
       ->messages()
-      ->create(['reply_id' => $reply->id ?? $reply] + $message);
+      ->create([
+        'reply_id' => $reply->id ?? $reply,
+        'reply_type' => self::config('models.message'),
+      ] + $message);
   }
 
   /**
