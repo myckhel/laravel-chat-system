@@ -44,7 +44,7 @@ class MessageController extends Controller
       $reply    = [];
       $with     = [
         'reply',
-        'trashed' => fn ($q) => $q->withTrashed($user),
+        'trashed' => fn ($q) => $q->withAll($user),
         'sender',
       ];
 

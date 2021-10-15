@@ -21,8 +21,8 @@ class ChatEvent extends Model implements IChatEvent
       return ChatEventFactory::new();
     }
 
-    function scopeWithTrashed($q, ChatEventMaker $user) {
-      $q->select('id', 'maker_id', 'maker_type', 'made_id', 'made_type', 'all')->whereMakerId($user->id)->orWhere('all', true);
+    function scopeWithAll($q, ChatEventMaker $user) {
+      $q->select('*')->whereMakerId($user->id)->orWhere('all', true);
     }
 
     function scopeNotMessanger($q, ChatEventMaker|int $user) {
@@ -30,13 +30,11 @@ class ChatEvent extends Model implements IChatEvent
     }
 
     function message(): BelongsTo {
-      $message = self::config('models.message');
-      return $this->belongsTo($message, 'made_id')->whereMadeType($message);
+      return $this->belongsTo(self::config('models.message'), 'made_id');
     }
 
     function conversation(): BelongsTo {
-      $conversation = self::config('models.conversation');
-      return $this->belongsTo($conversation, 'made_id')->whereMadeType($conversation);
+      return $this->belongsTo(self::config('models.conversation'), 'made_id');
     }
 
     function maker(): MorphTo{
