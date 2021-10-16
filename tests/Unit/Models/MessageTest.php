@@ -241,14 +241,17 @@ it('should let collection make events', function() {
 /* Relationship Tests */
 
 it('belongs to a conversation', function() {
+  $this->message->makeRead($this->message->sender);
   expect($this->message->conversation)->toHaveKeys(['id', 'name']);
 });
 
 it('have many chatEvents', function() {
+  $this->message->makeRead($this->message->sender);
   expect($this->message->chatEvents->first())->toHaveKeys(['id', 'maker_id']);
 });
 
 it('belongs to a sender', function() {
+  $this->message->makeRead($this->message->sender);
   expect($this->message->sender)->toHaveKeys(['id', 'name']);
 });
 
