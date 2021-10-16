@@ -194,15 +194,12 @@ class MessageCollection extends Collection {
   }
 
   private function makeChatEvent(ChatEventMaker $user, $type = 'read', $all = false) {
-    $create = [];
-    $this->map(function ($msg) use(&$create, $all, $user) {
-      $create[] = [
-        'made_id'    => $msg->id,
-        'made_type'  => $msg::class,
-        'type'       => 'delete',
-        'all'        => $all ? $msg->user_id === $user->id : false,
-      ];
-    });
+    $create = $this->map(fn ($msg) => [
+      'made_id'    => $msg->id,
+      'made_type'  => $msg::class,
+      'type'       => 'delete',
+      'all'        => $all ? $msg->user_id === $user->id : false,
+    ]);
 
     return $user->chatEventMakers()->createMany($create);
   }
