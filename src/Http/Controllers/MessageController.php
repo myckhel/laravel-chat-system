@@ -20,13 +20,9 @@ class MessageController extends Controller
     public function index(PaginableRequest $request)
     {
       $request->validate([
-        'orderBy'            => '',
-        'search'             => 'min:3',
-        'order'              => 'in:asc,desc',
         'pageSize'           => 'int',
         'conversation_id'    => 'int|nullable',
         'other_user_id'      => 'int',
-        'system'             => 'boolean',
         'reply_id'           => 'int',
         'reply_type'         => [
           Rule::requiredIf(fn () => $request->reply_id),
@@ -36,11 +32,8 @@ class MessageController extends Controller
 
       $user     = $request->user();
       $pageSize = $request->pageSize;
-      $order    = $request->order;
-      $orderBy  = $request->orderBy;
       $reply_type  = $request->reply_type;
       $reply_id = $request->reply_id;
-      $system   = $request->system;
       $reply    = [];
       $with     = [
         'reply',
@@ -54,7 +47,6 @@ class MessageController extends Controller
       if ($reply_type) {
         $reply['reply_type']  = $reply_type;
       }
-
 
       $messages = $user->messages($request->conversation_id, $request->other_user_id, $reply ?? null)
       // ->withUrls(['image', 'videos'])
@@ -87,8 +79,8 @@ class MessageController extends Controller
       @[
         'reply_id'        => $reply_id,
         'reply_type'      => $reply_type,
-        'image'           => $image,
-        'videos'          => $videos,
+        // 'image'           => $image,
+        // 'videos'          => $videos,
         'token'           => $token,
         'other_user_id'   => $other_user_id,
         'type'            => $type,
