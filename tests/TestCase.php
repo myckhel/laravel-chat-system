@@ -38,6 +38,7 @@ class TestCase extends Orchestra
 
     config()->set('auth.providers.users.model', User::class);
     config()->set('chat-system.models.user', User::class);
+    config()->set('app.debug', true);
     config()->set('app.key', 'base64:'.base64_encode(
       Encrypter::generateKey(config()['app.cipher'])
     ));
