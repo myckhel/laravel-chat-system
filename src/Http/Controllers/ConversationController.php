@@ -145,10 +145,10 @@ class ConversationController extends Controller
 
       $user     = $request->user();
 
-      $conversation->update([
+      $conversation->update(array_filter([
         'name'    => $name,
         'type'    => $type,
-      ]);
+      ]));
 
       return $conversation;
     }
@@ -178,7 +178,7 @@ class ConversationController extends Controller
       return $user->conversations()
       ->whereNotTrashed($user->id)
       ->whereHasLastMessage($user)
-      ->when($type, fn ($q) => $q->whereHas('unread'))
+      ->when($type, fn ($q) => $q->whereHas($type))
       ->count();
     }
 
