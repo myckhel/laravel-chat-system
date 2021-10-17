@@ -1,27 +1,83 @@
 <?php
 
 namespace Myckhel\ChatSystem\Tests;
+use Myckhel\ChatSystem\ChatSystem;
+use Myckhel\ChatSystem\ChatSystemServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Myckhel\ChatSystem\Tests\Models\User;
+use Myckhel\ChatSystem\Database\Seeders\ConversationSeeder;
+use Illuminate\Encryption\Encrypter;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-abstract class TestCase extends Orchestra
+class TestCase extends Orchestra
 {
-  public function setUp(): void
-  {
-    // $this->loadEnvironmentVariables();
-
+  protected function setUp(): void {
     parent::setUp();
 
-    // $this->setUpDatabase($this->app);
+    $this->setUpDatabase();
 
-    // $this->setUpTempTestFiles();
-    //
-    // $this->testModel = TestModel::first();
-    // $this->testUnsavedModel = new TestModel();
-    // $this->testModelWithConversion = TestModelWithConversion::first();
-    // $this->testModelWithConversionQueued = TestModelWithConversionQueued::first();
-    // $this->testModelWithoutMediaConversions = TestModelWithoutMediaConversions::first();
-    // $this->testModelWithMorphMap = TestModelWithMorphMap::first();
-    // $this->testModelWithResponsiveImages = TestModelWithResponsiveImages::first();
-    // $this->testModelWithConversionsOnOtherDisk = TestModelWithConversionsOnOtherDisk::first();
+    Factory::guessFactoryNamesUsing(
+      fn (string $modelName) => 'Myckhel\\ChatSystem\\Database\\Factories\\'.class_basename($modelName).'Factory'
+    );
+
+    ChatSystem::registerObservers();
+
+    $this->seed(ConversationSeeder::class);
+  }
+
+  protected function getPackageProviders($app)
+  {
+    return [
+      ChatSystemServiceProvider::class,
+    ];
+  }
+
+  public function getEnvironmentSetUp($app)
+  {
+    config()->set('database.default', 'testing');
+
+    config()->set('auth.providers.users.model', User::class);
+    config()->set('chat-system.models.user', User::class);
+    config()->set('app.debug', true);
+    config()->set('app.key', 'base64:'.base64_encode(
+      Encrypter::generateKey(config()['app.cipher'])
+    ));
+  }
+
+  protected function setUpDatabase()
+  {
+    $this->migrateTables();
+
+    $this->createTables(User::class);
+    $this->seedModels(User::class);
+  }
+
+  protected function createTables(...$modelClasses)
+  {
+    collect($modelClasses)->each(
+      fn (string $modelClass) => $modelClass::up()
+    );
+  }
+
+  protected function seedModels(...$modelClasses)
+  {
+    collect($modelClasses)->each(function (string $modelClass) {
+      foreach (range(10, 0) as $index) {
+        $modelClass::create(['name' => "name {$index}"]);
+      }
+    });
+  }
+
+  protected function migrateTables()
+  {
+    require_once __DIR__.'/../database/migrations/2021_03_08_192416_create_conversations_table.php';
+    require_once __DIR__.'/../database/migrations/2021_03_08_192914_create_conversation_users_table.php';
+    require_once __DIR__.'/../database/migrations/2021_03_08_193929_create_messages_table.php';
+    require_once __DIR__.'/../database/migrations/2021_03_08_194910_create_chat_events_table.php';
+
+    (new \CreateConversationsTable())->up();
+    (new \CreateConversationUsersTable())->up();
+    (new \CreateMessagesTable())->up();
+    (new \CreateChatEventsTable())->up();
   }
 }
