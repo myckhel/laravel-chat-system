@@ -37,7 +37,7 @@ class ConversationController extends Controller
       ->orderByDesc('latest_message_at')
       ->with([
         // 'chatEvents' => fn ($q) => $q->groupBy('chat_events.id', 'chat_events.maker_type', 'chat_events.maker_id', 'chat_events.made_type', 'chat_events.made_id', 'chat_events.all', 'chat_events.created_at', 'chat_events.updated_at'),
-        'delivery'      => fn ($q) => $queryEvent($q)->where('maker_id', '!=', $user->id),
+        'delivered'      => fn ($q) => $queryEvent($q)->where('maker_id', '!=', $user->id),
         'read'          => fn ($q) => $queryEvent($q)->where('maker_id', '!=', $user->id),
         'trashed'       => $queryEvent,
         'last_message' => fn ($q) => $q->select(['id','user_id','message','conversation_id', 'created_at'])

@@ -139,13 +139,6 @@ class Message extends Model implements IMessage
       return $user->chatEventMakers()->firstOrCreate($create, $create);
     }
 
-    // public function otherParticipants($user = null){
-    //   $user_id = $user->id ?? $user ?? auth()->user()->id ?? null;
-    //   return ConversationUser::whereHas('conversation', fn ($q) =>
-    //     $q->whereHas('participants', fn ($q) => $q->whereUserId($user_id))
-    //   );
-    // }
-
     public function participants(IChatEventMaker|int $user = null){
       $user_id = $user->id ?? $user ?? null;
       return self::config('models.conversation_user')::whereHas('conversation', fn ($q) =>
