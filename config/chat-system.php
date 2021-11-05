@@ -7,7 +7,7 @@ return [
   "models" => [
     /*
     * The model you want to use as a User model needs to implement the
-    * `Myckhel\ChatSystem\Contracts\ChatEventMaker` contract.
+    * `Myckhel\ChatSystem\Contracts\IChatEventMaker` contract.
     */
     "user"                => "App\\Models\\User",
 

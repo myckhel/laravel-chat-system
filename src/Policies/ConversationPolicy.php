@@ -2,7 +2,7 @@
 
 namespace Myckhel\ChatSystem\Policies;
 
-use Myckhel\ChatSystem\Contracts\ChatEventMaker;
+use Myckhel\ChatSystem\Contracts\IChatEventMaker;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Myckhel\ChatSystem\Contracts\IConversation;
 
@@ -13,10 +13,10 @@ class ConversationPolicy
     /**
      * Determine whether the user can view any models.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEventMaker  $user
      * @return mixed
      */
-    public function viewAny(ChatEventMaker $user)
+    public function viewAny(IChatEventMaker $user)
     {
         //
     }
@@ -24,11 +24,11 @@ class ConversationPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEventMaker  $user
      * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
      * @return mixed
      */
-    public function view(ChatEventMaker $user, IConversation $conversation)
+    public function view(IChatEventMaker $user, IConversation $conversation)
     {
       return $user->relatedToConversation($conversation);
     }
@@ -36,10 +36,10 @@ class ConversationPolicy
     /**
      * Determine whether the user can create models.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEventMaker  $user
      * @return mixed
      */
-    public function create(ChatEventMaker $user)
+    public function create(IChatEventMaker $user)
     {
         //
     }
@@ -47,11 +47,11 @@ class ConversationPolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEventMaker  $user
      * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
      * @return mixed
      */
-    public function update(ChatEventMaker $user, IConversation $conversation)
+    public function update(IChatEventMaker $user, IConversation $conversation)
     {
       return $user->id == $conversation->user_id;
     }
@@ -59,11 +59,11 @@ class ConversationPolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEventMaker  $user
      * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
      * @return mixed
      */
-    public function delete(ChatEventMaker $user, IConversation $conversation)
+    public function delete(IChatEventMaker $user, IConversation $conversation)
     {
       return $user->relatedToConversation($conversation);
     }
@@ -71,11 +71,11 @@ class ConversationPolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEventMaker  $user
      * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
      * @return mixed
      */
-    public function restore(ChatEventMaker $user, IConversation $conversation)
+    public function restore(IChatEventMaker $user, IConversation $conversation)
     {
         //
     }
@@ -83,16 +83,16 @@ class ConversationPolicy
     /**
      * Determine whether the user can permanently delete the model.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\ChatEventMaker  $user
+     * @param  \Myckhel\ChatSystem\Contracts\IChatEventMaker  $user
      * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
      * @return mixed
      */
-    public function forceDelete(ChatEventMaker $user, IConversation $conversation)
+    public function forceDelete(IChatEventMaker $user, IConversation $conversation)
     {
         //
     }
 
-    function join(ChatEventMaker $user, IConversation $conversation) {
+    function join(IChatEventMaker $user, IConversation $conversation) {
       return $conversation->type != 'private';
     }
 }

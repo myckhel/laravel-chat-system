@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Myckhel\ChatSystem\Traits\Message\HasMessage;
 use Myckhel\ChatSystem\Traits\ChatEvent\CanMakeChatEvent;
-use Myckhel\ChatSystem\Contracts\ChatEventMaker;
+use Myckhel\ChatSystem\Contracts\IChatEventMaker;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 
 
-class User extends Authenticatable implements ChatEventMaker
+class User extends Authenticatable implements IChatEventMaker
 {
     use HasFactory, HasMessage, CanMakeChatEvent;
 
