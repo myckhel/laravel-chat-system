@@ -74,7 +74,7 @@ class Message extends Model implements IMessage
       return $q->whereDoesntHaveChatEvents('delete', $user);
     }
 
-    function scopeWhereRelatedToUser($q, IChatEventMaker|int $user) {
+    function scopeWhereRelatedTo($q, IChatEventMaker|int $user) {
       $q->whereHas('conversation', fn ($q) =>
         $q->whereHas('participants', fn ($q) => $q->whereUserId($user->id ?? $user))
       );

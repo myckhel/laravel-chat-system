@@ -57,7 +57,7 @@ trait HasMessage
   function undelivered() {
     return self::config('models.message')
       ::where('user_id', '!=', $this->id)
-      ->whereRelatedToUser($this)
+      ->whereRelatedTo($this)
       ->hasNoEvent(fn ($q) => $q->whereMakerId($this->id)->whereType('deliver'))
       ->latest();
   }
