@@ -77,7 +77,7 @@ class Conversation extends Model implements IConversation
     $participant = ['user_id' => $user->getKey()];
     $participant = $this->participants()->firstOrCreate($participant, $participant);
 
-    $participant->wasRecentlyCreated && $this->createMessageActivity([
+    $participant->wasRecentlyCreated && $this->createActivityMessage([
         'user_id' => $user->getKey(),
         'message' => $message,
       ]);
@@ -95,14 +95,14 @@ class Conversation extends Model implements IConversation
   function removeParticipant(IChatEventMaker $user, String $message = 'Someone left the conversation') {
     $participant = ['user_id' => $user->getKey()];
     $participant = $this->participants()->whereUserId($user->getKey())->first();
-    $participant && $this->createMessageActivity([
+    $participant && $this->createActivityMessage([
         'user_id' => $user->getKey(),
         'message' => $message,
       ]);
     return $participant?->delete();
   }
 
-  protected function createMessageActivity(Array $message) {
+  protected function createActivityMessage(Array $message) {
     return $this->messages()->create($message + ['type'    => 'activity']);
   }
 
