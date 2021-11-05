@@ -276,7 +276,7 @@ it('should let collection make deliver events', function() {
   $conversation2->createMessage(['user_id' => $this->user_id, 'message' => 'last message of the day']);
 
   $conversations = Conversation::whereIn('id', [$conversation->id, $conversation2->id])->get();
-  $deliveredEvents = $conversations->makeDelivered($otherUser);
+  $deliveredEvents = $conversations->makeDeliver($otherUser);
 
   expect(count($deliveredEvents))->toBe(2);
 

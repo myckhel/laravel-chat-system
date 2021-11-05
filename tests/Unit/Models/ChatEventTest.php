@@ -10,7 +10,7 @@ beforeEach(function() {
       'user_id' => $user->id ?? $user, 'message' => $this->faker->sentence
     ]);
 
-  $this->mockChatEvent = function ($model = 'Message', &$otherUser = null, &$user = null, &$conversation = null, &$mockedModel = null, $event = 'Delivered', $all = null) {
+  $this->mockChatEvent = function ($model = 'Message', &$otherUser = null, &$user = null, &$conversation = null, &$mockedModel = null, $event = 'Deliver', $all = null) {
     $otherUser = ($this->mockUser)();
     $user = ($this->mockUser)();
     $conversation = $conversation ?? $this->conversation;

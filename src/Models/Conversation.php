@@ -224,7 +224,7 @@ class Conversation extends Model implements IConversation
 }
 
 class ConversationCollection extends Collection {
-  function makeDelivered(IChatEventMaker $user){
+  function makeDeliver(IChatEventMaker $user){
     MakeEvent::dispatch($user, 'deliver', $this)->afterResponse();
     return $this;
   }

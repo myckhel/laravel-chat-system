@@ -49,7 +49,7 @@ class ConversationController extends Controller
         'participant.user' => fn ($q) => $q,//->withUrls(['avatar']),
       ])->paginate($pageSize);
 
-      $conversations->makeDelivered($user);
+      $conversations->makeDeliver($user);
 
       $conversations->map(function ($conversation) {
         if ($conversation->type == 'private')

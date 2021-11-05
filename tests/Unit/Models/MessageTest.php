@@ -227,7 +227,7 @@ it('should let collection make events', function() {
 
   $messages = $conversation->messages()->whereType('user')->get();
 
-  $deliveredEvents = $messages->makeDelivered($otherUser);
+  $deliveredEvents = $messages->makeDeliver($otherUser);
   $readEvents = $messages->makeRead($otherUser);
   $deletedEvents = $messages->makeDelete($otherUser);
 

@@ -124,7 +124,7 @@ class Message extends Model implements IMessage
     function makeRead(IChatEventMaker $user) {
       return $this->makeChatEvent($user, 'read');
     }
-    function makeDelivered(IChatEventMaker $user) {
+    function makeDeliver(IChatEventMaker $user) {
       return $this->makeChatEvent($user, 'deliver');
     }
 
@@ -189,7 +189,7 @@ class MessageCollection extends Collection {
     return $this->makeChatEvent($user, 'delete', $all);
   }
 
-  function makeDelivered($user = null){
+  function makeDeliver($user = null){
     return $this->makeChatEvent($user, 'deliver');
   }
 
