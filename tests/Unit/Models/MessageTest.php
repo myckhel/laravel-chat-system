@@ -36,7 +36,7 @@ it('can make a read event', function() {
 it('can make a deliver event', function() {
   Event::fake([Events::class]);
 
-  $readEvent = $this->conversation->makeDelivery($this->conversation->author);
+  $readEvent = $this->conversation->makeDeliver($this->conversation->author);
 
   expect($readEvent)->toMatchArray($this->chatEvent + ['type' => 'deliver']);
 
@@ -116,7 +116,7 @@ it('adds condition where conversation doesnt have chat events', function() {
 
   $message1->makeDelete($otherUser);
   $conversation->makeRead($otherUser);
-  $conversation->makeDelivery($otherUser);
+  $conversation->makeDeliver($otherUser);
 
   $query = $conversation->messages()->whereType('user');
 

@@ -129,7 +129,7 @@ class Conversation extends Model implements IConversation
   function makeRead(IChatEventMaker $user = null, $row = true, $all = false) {
     return $this->makeChatEvent($user, 'read', $row, $all);
   }
-  function makeDelivery(IChatEventMaker $user = null, $row = true, $all = false) {
+  function makeDeliver(IChatEventMaker $user = null, $row = true, $all = false) {
     return $this->makeChatEvent($user, 'deliver', $row, $all);
   }
 

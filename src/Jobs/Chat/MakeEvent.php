@@ -47,7 +47,7 @@ class MakeEvent implements ShouldQueue
           $q->whereIn('id', $conversation->pluck('id'))
         )->where('user_id', '!=', $this->user->id)->get();
 
-        $undelivered->map(fn ($msg) => $msg->conversation->makeDelivery($this->user));
+        $undelivered->map(fn ($msg) => $msg->conversation->makeDeliver($this->user));
       }
     }
 }
