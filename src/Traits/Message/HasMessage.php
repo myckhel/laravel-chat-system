@@ -13,6 +13,15 @@ trait HasMessage
 {
   use Config;
 
+  /**
+   * adds query for model's messages
+   *
+   * @param IConversation|int|null $conversation
+   * @param nullable $otherUser
+   * @param array $reply
+   * @param string $type
+   * @return QueryBuilder
+   */
   function messages(IConversation|int $conversation = null, $otherUser = null, Array $reply = [], $type = 'private'){
     if ($type == 'private') {
       if ($conversation || $otherUser) {
@@ -54,6 +63,11 @@ trait HasMessage
     }
   }
 
+  /**
+   * adds query for model where it messages has not been delivered
+   *
+   * @return QueryBuilder
+   */
   function undelivered() {
     return self::config('models.message')
       ::where('user_id', '!=', $this->id)
@@ -62,6 +76,14 @@ trait HasMessage
       ->latest();
   }
 
+  /**
+   * adds query for model's conversations
+   *
+   * @param IConversation|int|null $conversation
+   * @param nullable $otherUser
+   * @param array $type
+   * @return BelongsToMany
+   */
   function conversations(IConversation|int $conversation = null, $otherUser = null, array $type = []){
     return $this->belongsToMany(
         self::config('models.conversation'), 'conversation_users'
@@ -71,9 +93,22 @@ trait HasMessage
       ->when($otherUser, fn ($q) => $q->whereHas('participants', fn ($q) => $q->whereUserId($otherUser->id ?? $otherUser)));
   }
 
+  /**
+   * checks wherther model is related to the given message
+   *
+   * @param IMessage $message
+   * @return bool
+   */
   function relatedToMessage(IMessage $message) {
     return $this->id === $message->user_id || !!$message->participants($this->id)->first();
   }
+
+  /**
+   * checks wherther model is related to the given conversation
+   *
+   * @param IConversation $conversation
+   * @return bool
+   */
   function relatedToConversation(IConversation $conversation) {
     return $this->id === $conversation->user_id || !!$conversation->participant($this->id)->first();
   }

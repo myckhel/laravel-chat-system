@@ -20,9 +20,20 @@ class ConversationUser extends Model implements IConversationUser
       return ConversationUserFactory::new();
     }
 
+    /**
+     * ConversationUser belongs to a user.
+     *
+     * @return BelongsTo
+     */
     function user(): BelongsTo {
       return $this->belongsTo(self::config('models.user'));
     }
+
+    /**
+     * ConversationUser belongs to a conversation.
+     *
+     * @return BelongsTo
+     */
     function conversation(): BelongsTo {
       return $this->belongsTo(Conversation::class);
     }

@@ -9,6 +9,10 @@ class ChatSystem
 {
   use Config;
 
+  /**
+   * method to register policies ChatSystem provides.
+   *
+   */
   static function registerPolicies() {
     Gate::guessPolicyNamesUsing(function ($modelClass) {
       $spilts = explode('\\', $modelClass);
@@ -16,6 +20,10 @@ class ChatSystem
     });
   }
 
+  /**
+   * method to register observers ChatSystem provides.
+   *
+   */
   static function registerObservers(array $exclude = []) {
     @[
       'chat_event' => $chat_event,
@@ -29,10 +37,22 @@ class ChatSystem
       ::observe(self::config('observers.models.conversation'));
   }
 
+  /**
+   * method to register broadcast routes ChatSystem provides.
+   *
+   */
   static function registerBroadcastRoutes() {
     require __DIR__.'/routes/channels.php';
   }
 
+  /**
+   * method to asynchronously call fuctions
+   * if only `laravel octane` is configured to use swoole
+   * otherwise call functions synchronously.
+   *
+   * @param Closure ...$calls
+   * @return array|Collection
+   */
   static function async(...$calls){
     if (config('octane.server') === 'swoole') {
       return Octane::concurrently($calls);
