@@ -26,11 +26,23 @@ class Message extends Model implements IMessage
     protected $appends  = ['isSender'];
     protected $hidden   = ['media'];
 
+    /**
+     * adds query to to exclude the given user
+     *
+     * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker $user
+     * @return QueryBuilder
+     */
     function scopeWhereNotSender($q, IChatEventMaker|int $user = null) {
       $user_id = $user->id ?? $user ?? auth()->user()->id;
       $q->where('user_id', '!=', $user_id);
     }
 
+    /**
+     * adds query condition on the given reply_id and or reply_type
+     *
+     * @param Array $reply
+     * @return QueryBuilder
+     */
     function scopeWhereReply($q, $reply) {
       $q->when($reply['reply_id'] ?? null,
         fn ($q) => $q->whereReplyId($reply['reply_id'])
@@ -44,6 +56,14 @@ class Message extends Model implements IMessage
       return MessageFactory::new();
     }
 
+    /**
+     * adds query where message doesn't have chatEvents
+     *
+     * @param string|null $type
+     * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $user
+     * @param Closure|null $conversationScope
+     * @return QueryBuilder
+     */
     function scopeWhereDoesntHaveChatEvents($q, $type = null, IChatEventMaker|int $user = null, $conversationScope = null) {
       $user_id = $user->id ?? $user ?? auth()->user()->id;
 
@@ -62,36 +82,78 @@ class Message extends Model implements IMessage
       }
     }
 
+    /**
+     * adds query where message is not read by the given user
+     *
+     * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $user
+     * @return QueryBuilder
+     */
     function scopeWhereNotReadBy($q, IChatEventMaker|int $user) {
       return $q->whereDoesntHaveChatEvents('read', $user);
     }
 
+    /**
+     * adds query where message is not delivered to the given user
+     *
+     * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $user
+     * @return QueryBuilder
+     */
     function scopeWhereNotDeliveredTo($q, IChatEventMaker|int $user) {
       return $q->whereDoesntHaveChatEvents('deliver', $user);
     }
 
+    /**
+     * adds query where message is not deleted by the given user
+     *
+     * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $user
+     * @return QueryBuilder
+     */
     function scopeWhereNotDeletedBy($q, IChatEventMaker|int $user) {
       return $q->whereDoesntHaveChatEvents('delete', $user);
     }
 
+    /**
+     * adds query where message has participant = user
+     *
+     * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $user
+     * @return QueryBuilder
+     */
     function scopeWhereRelatedTo($q, IChatEventMaker|int $user) {
       $q->whereHas('conversation', fn ($q) =>
         $q->whereHas('participants', fn ($q) => $q->whereUserId($user->id ?? $user))
       );
     }
 
+    /**
+     * adds query where message has chatEvents
+     *
+     * @param Closure $eventScope
+     * @return QueryBuilder
+     */
     function scopeHasEvent($q, callable $eventScope = null) {
       $q->whereHas('chatEvents', fn ($q) =>
         $q->when($eventScope, $eventScope)
       );
     }
 
+    /**
+     * adds query where message has no chatEvents
+     *
+     * @param Closure $eventScope
+     * @return QueryBuilder
+     */
     function scopeHasNoEvent($q, callable $eventScope = null) {
       $q->whereDoesntHave('chatEvents', fn ($q) =>
         $q->when($eventScope, $eventScope)
       );
     }
 
+    /**
+     * query where message's conversation has not been deleted
+     *
+     * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $by
+     * @return QueryBuilder
+     */
     function scopeWhereConversationWasntDeleted($q, IChatEventMaker $by = null) {
       $q->whereDoesntHave('conversation', fn ($q) =>
         $q->whereHas('chatEvents', fn ($q) =>
@@ -102,11 +164,18 @@ class Message extends Model implements IMessage
       );
     }
 
+
     function getIsSenderAttribute() {
       $user_id = auth()->user()->id ?? null;
       return $user_id === $this->user_id;
     }
 
+    /**
+     * > check if message has been deleted by all participants of the conversation message belongs to.
+     *
+     * @param int|null $maker_id
+     * @return bool
+     */
     function participantsHasDeleted(int $maker_id = null){
       [$participantsCount, $deleteEventsCount] = [
         $this->conversation->participants()->count(),
@@ -117,17 +186,45 @@ class Message extends Model implements IMessage
       return $deleteEventsCount == $participantsCount - 1;
     }
 
+    /**
+     * create a chatEvent of type `delete` for the `message` through the given `user`
+     *
+     * @param IChatEventMaker $user
+     * @param bool $all
+     * @return Myckhel\ChatSystem\Models\ChatEvent
+     */
     function makeDelete(IChatEventMaker $user, $all = false) {
       return $this->makeChatEvent($user, 'delete', $all);
     }
 
+    /**
+     * create a chatEvent of type `read` for the `message` through the given `user`
+     *
+     * @param IChatEventMaker $user
+     * @return Myckhel\ChatSystem\Models\ChatEvent
+     */
     function makeRead(IChatEventMaker $user) {
       return $this->makeChatEvent($user, 'read');
     }
+
+    /**
+     * create a chatEvent of type `deliver` for the `message` through the given `user`
+     *
+     * @param IChatEventMaker $user
+     * @return Myckhel\ChatSystem\Models\ChatEvent
+     */
     function makeDeliver(IChatEventMaker $user) {
       return $this->makeChatEvent($user, 'deliver');
     }
 
+    /**
+     * create a chatEvent of type `deliver` for the `message` through the given `user`
+     *
+     * @param IChatEventMaker $user
+     * @param string $type
+     * @param bool $all
+     * @return Myckhel\ChatSystem\Models\ChatEvent
+     */
     private function makeChatEvent(IChatEventMaker $user, $type = 'read', $all = false) {
       $create = [
         'made_id'    => $this->id,
@@ -139,6 +236,12 @@ class Message extends Model implements IMessage
       return $user->chatEventMakers()->firstOrCreate($create, $create);
     }
 
+    /**
+     * Query participants of the conversation the message belongs to.
+     *
+     * @param IChatEventMaker $user
+     * @return Myckhel\ChatSystem\Models\ChatEvent
+     */
     public function participants(IChatEventMaker|int $user = null){
       $user_id = $user->id ?? $user ?? null;
       return self::config('models.conversation_user')::whereHas('conversation', fn ($q) =>
@@ -146,11 +249,22 @@ class Message extends Model implements IMessage
       );
     }
 
+    /**
+     * Conversation message belongs to.
+     *
+     * @return BelongsTo
+     */
     public function conversation(): BelongsTo {
       return $this->belongsTo(self::config('models.conversation'));
     }
 
-    function chatEvents(Bool $distinctType = true): MorphMany {
+    /**
+     * Message has many chat events
+     *
+     * @param bool $distinctType
+     * @return MorphMany
+     */
+    function chatEvents(bool $distinctType = true): MorphMany {
       return $this->morphMany(self::config('models.chat_event'), 'made')
       ->when($distinctType, fn ($q) => $q->distinct('type'))
       ->latest();
@@ -160,10 +274,20 @@ class Message extends Model implements IMessage
     //   return $this->morphOne(Media::class, 'model')->latest();
     // }
 
+    /**
+     * Message belongs to user
+     *
+     * @return BelongsTo
+     */
     public function sender(): BelongsTo {
       return $this->belongsTo(self::config('models.user'), 'user_id');
     }
 
+    /**
+     * Message belongs to message as reply
+     *
+     * @return MorphTo
+     */
     public function reply(): MorphTo {
       return $this->morphTo();
     }
@@ -174,18 +298,52 @@ class Message extends Model implements IMessage
 }
 
 class MessageCollection extends Collection {
+  /**
+   * Method to mark messages as read,
+   * pass a user arg to specify the user reading the messages.
+   *
+   * @param IChatEventMaker $user
+   * @return ChatEvent
+   */
   function makeRead($user = null){
     return $this->makeChatEvent($user);
   }
 
+  /**
+   * Method to mark messages as deleted,
+   * pass a user arg to specify the user deleting the messages.
+   * pass a all arg to delete the messages for a participants of the message conversation.
+   *
+   * @param IChatEventMaker $user
+   * @param bool $all
+   * @return ChatEvent
+   */
   function makeDelete(IChatEventMaker $user = null, $all = false){
     return $this->makeChatEvent($user, 'delete', $all);
   }
 
+  /**
+   * Method to mark messages as delivered,
+   * pass a user arg to specify the user which messages are being delivered to.
+   *
+   * @param IChatEventMaker $user
+   * @return ChatEvent
+   */
   function makeDeliver($user = null){
     return $this->makeChatEvent($user, 'deliver');
   }
 
+  /**
+   * Method to make events for messages,
+   * pass a user arg to specify the user making the event.
+   * pass a type arg to specify the type of the event.
+   * pass a all arg to specify the event is for all participant of the conversation message belongs to.
+   *
+   * @param IChatEventMaker $user
+   * @param string $all
+   * @param bool $all
+   * @return ChatEvent
+   */
   private function makeChatEvent(IChatEventMaker $user, $type = 'read', $all = false) {
     $create = $this->map(fn ($msg) => [
       'made_id'    => $msg->id,

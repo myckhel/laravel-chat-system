@@ -21,25 +21,58 @@ class ChatEvent extends Model implements IChatEvent
       return ChatEventFactory::new();
     }
 
+    /**
+     * Adds query where maker is the given user or chat event is for all participants.
+     *
+     * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker $user
+     * @return QueryBuilder
+     */
     function scopeWithAll($q, IChatEventMaker $user) {
       $q->select('*')->whereMakerId($user->id)->orWhere('all', true);
     }
 
+    /**
+     * adds query where the chat event message sender is not the given user.
+     *
+     * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker $user
+     * @return QueryBuilder
+     */
     function scopeNotMessenger($q, IChatEventMaker|int $user) {
       $q->whereDoesntHave('message', fn($q) => $q->whereUserId($user->id ?? $user))->whereType('user');
     }
 
+    /**
+     * ChatEvent belongs to a message.
+     *
+     * @return BelongsTo
+     */
     function message(): BelongsTo {
       return $this->belongsTo(self::config('models.message'), 'made_id');
     }
 
+    /**
+     * ChatEvent belongs to a conversation.
+     *
+     * @return BelongsTo
+     */
     function conversation(): BelongsTo {
       return $this->belongsTo(self::config('models.conversation'), 'made_id');
     }
 
+    /**
+     * ChatEvent morph to maker models.
+     *
+     * @return MorphTo
+     */
     function maker(): MorphTo{
       return $this->morphTo();
     }
+
+    /**
+     * ChatEvent morph to made models.
+     *
+     * @return MorphTo
+     */
     function made(): MorphTo{
       return $this->morphTo();
     }

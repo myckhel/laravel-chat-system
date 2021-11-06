@@ -11,7 +11,18 @@ use Myckhel\ChatSystem\Traits\Config;
 trait CanMakeChatEvent
 {
   use Config;
-  function chatEventMakers(Model $model = null, $id = null, $type = null, $made_id = null, $made_type = null){
+
+  /**
+   * Model has many chat event makers
+   *
+   * @param Model $model
+   * @param int|null $id
+   * @param string|null $type
+   * @param int|null $made_id
+   * @param int|null $made_type
+   * @return MorphMany
+   */
+  function chatEventMakers(Model $model = null, int $id = null, string $type = null, int $made_id = null, string $made_type = null){
     return $this->morphMany(self::config('models.chat_event'), 'maker')->latest()
     ->when($type, fn ($q) => $q->whereType($type))
     ->when($made_id, fn ($q) => $q->whereMadeId($made_id))

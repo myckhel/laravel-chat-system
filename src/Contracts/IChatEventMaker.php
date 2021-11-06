@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 interface IChatEventMaker
 {
-  public function chatEventMakers(Model $model = null, $id = null, $type = null, $made_id = null, $made_type = null);
+  public function chatEventMakers(Model $model = null, int $id = null, string $type = null, int $made_id = null, string $made_type = null);
 }
