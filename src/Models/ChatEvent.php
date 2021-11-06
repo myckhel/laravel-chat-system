@@ -5,7 +5,7 @@ namespace Myckhel\ChatSystem\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Myckhel\ChatSystem\Contracts\ChatEventMaker;
+use Myckhel\ChatSystem\Contracts\IChatEventMaker;
 use Myckhel\ChatSystem\Database\Factories\ChatEventFactory;
 use Myckhel\ChatSystem\Traits\Config;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,11 +21,11 @@ class ChatEvent extends Model implements IChatEvent
       return ChatEventFactory::new();
     }
 
-    function scopeWithAll($q, ChatEventMaker $user) {
+    function scopeWithAll($q, IChatEventMaker $user) {
       $q->select('*')->whereMakerId($user->id)->orWhere('all', true);
     }
 
-    function scopeNotMessenger($q, ChatEventMaker|int $user) {
+    function scopeNotMessenger($q, IChatEventMaker|int $user) {
       $q->whereDoesntHave('message', fn($q) => $q->whereUserId($user->id ?? $user))->whereType('user');
     }
 

@@ -13,7 +13,7 @@ use Myckhel\ChatSystem\Traits\Config;
 use Myckhel\ChatSystem\Contracts\IConversation;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Myckhel\ChatSystem\Contracts\ChatEventMaker;
+use Myckhel\ChatSystem\Contracts\IChatEventMaker;
 
 class Conversation extends Model implements IConversation
 {
@@ -69,15 +69,15 @@ class Conversation extends Model implements IConversation
   /**
    * Adds a user as participant of the conversaton.
    *
-   * @param Myckhel\ChatSystem\Contracts\ChatEventMaker $user
+   * @param Myckhel\ChatSystem\Contracts\IChatEventMaker $user
    * @param string $message
    * @return Myckhel\ChatSystem\Models\ConversationUser
    */
-  function addParticipant(ChatEventMaker $user, String $message = 'Someone joined the conversation') {
+  function addParticipant(IChatEventMaker $user, String $message = 'Someone joined the conversation') {
     $participant = ['user_id' => $user->getKey()];
     $participant = $this->participants()->firstOrCreate($participant, $participant);
 
-    $participant->wasRecentlyCreated && $this->createMessageActivity([
+    $participant->wasRecentlyCreated && $this->createActivityMessage([
         'user_id' => $user->getKey(),
         'message' => $message,
       ]);
@@ -88,21 +88,21 @@ class Conversation extends Model implements IConversation
   /**
    * Removes a user as participant of the conversaton.
    *
-   * @param Myckhel\ChatSystem\Contracts\ChatEventMaker $user
+   * @param Myckhel\ChatSystem\Contracts\IChatEventMaker $user
    * @param string $message
    * @return bool|null
    */
-  function removeParticipant(ChatEventMaker $user, String $message = 'Someone left the conversation') {
+  function removeParticipant(IChatEventMaker $user, String $message = 'Someone left the conversation') {
     $participant = ['user_id' => $user->getKey()];
     $participant = $this->participants()->whereUserId($user->getKey())->first();
-    $participant && $this->createMessageActivity([
+    $participant && $this->createActivityMessage([
         'user_id' => $user->getKey(),
         'message' => $message,
       ]);
     return $participant?->delete();
   }
 
-  protected function createMessageActivity(Array $message) {
+  protected function createActivityMessage(Array $message) {
     return $this->messages()->create($message + ['type'    => 'activity']);
   }
 
@@ -113,27 +113,27 @@ class Conversation extends Model implements IConversation
   /**
    * Adds query where conversation has latest message where message is not a system message.
    *
-   * @param Myckhel\ChatSystem\Contarcts\ChatEventMaker $user
+   * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker $user
    * @return QueryBuilder
    */
-  function scopeWhereHasLastMessage($q, ChatEventMaker $user = null) {
+  function scopeWhereHasLastMessage($q, IChatEventMaker $user = null) {
     $q->whereHas('last_message', fn ($q) =>
       $q->where('type', '!=', 'system')
       ->whereConversationWasntDeleted($user)
     );
   }
 
-  function makeDelete(ChatEventMaker $user = null, $row = false, $all = false) {
+  function makeDelete(IChatEventMaker $user = null, $row = false, $all = false) {
     return $this->makeChatEvent($user, 'delete', $row, $all);
   }
-  function makeRead(ChatEventMaker $user = null, $row = true, $all = false) {
+  function makeRead(IChatEventMaker $user = null, $row = true, $all = false) {
     return $this->makeChatEvent($user, 'read', $row, $all);
   }
-  function makeDelivery(ChatEventMaker $user = null, $row = true, $all = false) {
+  function makeDeliver(IChatEventMaker $user = null, $row = true, $all = false) {
     return $this->makeChatEvent($user, 'deliver', $row, $all);
   }
 
-  private function makeChatEvent(ChatEventMaker $user, $type = 'delete', $row = false, $all = false) {
+  private function makeChatEvent(IChatEventMaker $user, $type = 'delete', $row = false, $all = false) {
     $create = [
       'made_id'    => $this->id,
       'made_type'  => $this::class,
@@ -156,10 +156,10 @@ class Conversation extends Model implements IConversation
   /**
    * Adds query where conversation doesn't have the given user as a participant.
    *
-   * @param Myckhel\ChatSystem\Contarcts\ChatEventMaker $user
+   * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker $user
    * @return QueryBuilder
    */
-  function scopeWhereNotParticipant($q, ChatEventMaker|int $user) {
+  function scopeWhereNotParticipant($q, IChatEventMaker|int $user) {
     $q->whereDoesntHave('participants', fn ($q) => $q->whereUserId($user->id ?? $user));
   }
 
@@ -186,21 +186,21 @@ class Conversation extends Model implements IConversation
     return $this->hasMany(self::config('models.message'));
   }
 
-  public function unread(int|ChatEventMaker $user = null){
+  public function unread(int|IChatEventMaker $user = null){
     $user_id = $user->id ?? $user ?? auth()->user()?->id;
 
     return $this->doesntHaveChatEvents($user_id, 'read')->latest()
       ->when($user_id, fn ($q) => $q->whereNotSender($user_id));
   }
 
-  function undelivered(int|ChatEventMaker $user = null){
+  function undelivered(int|IChatEventMaker $user = null){
     $user_id = $user->id ?? $user ?? auth()->user()?->id;
 
     return $this->doesntHaveChatEvents($user_id, 'deliver')
     ->where('user_id', '!=', $user_id);
   }
 
-  function doesntHaveChatEvents(int|ChatEventMaker $user, $type = null) {
+  function doesntHaveChatEvents(int|IChatEventMaker $user, $type = null) {
     $user_id = $user->id ?? $user;
 
     return $this->messages()
@@ -224,7 +224,7 @@ class Conversation extends Model implements IConversation
 }
 
 class ConversationCollection extends Collection {
-  function makeDelivered(ChatEventMaker $user){
+  function makeDeliver(IChatEventMaker $user){
     MakeEvent::dispatch($user, 'deliver', $this)->afterResponse();
     return $this;
   }

@@ -123,7 +123,7 @@ it('can make a read event', function() {
 it('can make a deliver event', function() {
   Event::fake([Events::class]);
 
-  $readEvent = $this->conversation->makeDelivery($this->conversation->author);
+  $readEvent = $this->conversation->makeDeliver($this->conversation->author);
 
   expect($readEvent)->toMatchArray($this->chatEvent + ['type' => 'deliver']);
 
@@ -276,7 +276,7 @@ it('should let collection make deliver events', function() {
   $conversation2->createMessage(['user_id' => $this->user_id, 'message' => 'last message of the day']);
 
   $conversations = Conversation::whereIn('id', [$conversation->id, $conversation2->id])->get();
-  $deliveredEvents = $conversations->makeDelivered($otherUser);
+  $deliveredEvents = $conversations->makeDeliver($otherUser);
 
   expect(count($deliveredEvents))->toBe(2);
 
