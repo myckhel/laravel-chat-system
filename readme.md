@@ -1,5 +1,4 @@
 # `ChatSystem`
-> :warning: **WIP**: Work In Progress!
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
@@ -16,7 +15,6 @@ $ composer require myckhel/laravel-chat-system
 ```
 
 ## `Documentaion`
-> :warning: **WIP**: Work In Progress!
 ### **[Documentaion](https://myckhel.github.io/laravel-chat-system)**
 
 ## `Postman Documentaion`
