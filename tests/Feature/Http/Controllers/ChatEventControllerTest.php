@@ -1,7 +1,8 @@
 <?php
-use Myckhel\ChatSystem\Traits\Config;
 
-beforeEach(function() {
+use Myckhel\ChatSystem\Config;
+
+beforeEach(function () {
   $this->user = auth()->user();
   $this->conversation = ($this->mockConversation)($this->user);
 });
