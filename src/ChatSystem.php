@@ -1,22 +1,22 @@
 <?php
 
 namespace Myckhel\ChatSystem;
+
 use Illuminate\Support\Facades\Gate;
-use Myckhel\ChatSystem\Traits\Config;
+use Myckhel\ChatSystem\Config;
 use Laravel\Octane\Facades\Octane;
 
 class ChatSystem
 {
-  use Config;
-
   /**
    * method to register policies ChatSystem provides.
    *
    */
-  static function registerPolicies() {
+  static function registerPolicies()
+  {
     Gate::guessPolicyNamesUsing(function ($modelClass) {
       $spilts = explode('\\', $modelClass);
-      return 'Myckhel\\ChatSystem\\Policies\\'.array_pop($spilts).'Policy';
+      return 'Myckhel\\ChatSystem\\Policies\\' . array_pop($spilts) . 'Policy';
     });
   }
 
@@ -24,25 +24,27 @@ class ChatSystem
    * method to register observers ChatSystem provides.
    *
    */
-  static function registerObservers(array $exclude = []) {
+  static function registerObservers(array $exclude = [])
+  {
     @[
       'chat_event' => $chat_event,
       'conversation' => $conversation
     ] = $exclude;
 
-    $chat_event != true && self::config('models.chat_event')
-      ::observe(self::config('observers.models.chat_event'));
+    $chat_event != true && Config::config('models.chat_event')
+      ::observe(Config::config('observers.models.chat_event'));
 
-    $conversation !== true && self::config('models.conversation')
-      ::observe(self::config('observers.models.conversation'));
+    $conversation !== true && Config::config('models.conversation')
+      ::observe(Config::config('observers.models.conversation'));
   }
 
   /**
    * method to register broadcast routes ChatSystem provides.
    *
    */
-  static function registerBroadcastRoutes() {
-    require __DIR__.'/routes/channels.php';
+  static function registerBroadcastRoutes()
+  {
+    require __DIR__ . '/routes/channels.php';
   }
 
   /**
@@ -53,7 +55,8 @@ class ChatSystem
    * @param Closure ...$calls
    * @return array|Collection
    */
-  static function async(...$calls){
+  static function async(...$calls)
+  {
     if (config('octane.server') === 'swoole') {
       return Octane::concurrently($calls);
     } else {

@@ -1,15 +1,14 @@
 <?php
+
 namespace Myckhel\ChatSystem\Traits\ChatEvent;
 
-use Myckhel\ChatSystem\Models\Conversation;
-use Myckhel\ChatSystem\Traits\Config;
+use Myckhel\ChatSystem\Config;
+
 /**
  *
  */
 trait HasChatEvent
 {
-  use Config;
-
   /**
    * adds query where model does not have trashed items
    * by the given maker.
@@ -17,7 +16,8 @@ trait HasChatEvent
    * @param int|null $maker_id
    * @return QueryBuilder
    */
-  function scopeWhereNotTrashed($q, $maker_id) {
+  function scopeWhereNotTrashed($q, $maker_id)
+  {
     $q->whereDoesntHave('trashed', fn ($q) => $q->where('all', true)->orWhere('maker_id', $maker_id));
   }
 
@@ -27,10 +27,11 @@ trait HasChatEvent
    *
    * @return MorphMany
    */
-  function chatEvents(){
-    return $this->morphMany(self::config('models.chat_event'), 'made')
-    ->groupByRaw('"type" desc')
-    ->orderBy('id', 'desc');
+  function chatEvents()
+  {
+    return $this->morphMany(Config::config('models.chat_event'), 'made')
+      ->groupByRaw('"type" desc')
+      ->orderBy('id', 'desc');
   }
 
   /**
@@ -39,8 +40,9 @@ trait HasChatEvent
    *
    * @return MorphOne
    */
-  function chatEvent(){
-    return $this->morphOne(self::config('models.chat_event'), 'made')->latest();
+  function chatEvent()
+  {
+    return $this->morphOne(Config::config('models.chat_event'), 'made')->latest();
   }
 
   /**
@@ -50,13 +52,14 @@ trait HasChatEvent
    * @param ChatEventMaker|null $maker
    * @return MorphOne
    */
-  function delivered(ChatEventMaker $maker = null) {
-    return $this->morphOne(self::config('models.chat_event'), 'made')
-    ->whereType('deliver')->latest()
-    ->when(
-      $maker,
-      fn ($q) => $q->whereMakerId($maker->id)->whereMadeType($maker::class)
-    );
+  function delivered(ChatEventMaker $maker = null)
+  {
+    return $this->morphOne(Config::config('models.chat_event'), 'made')
+      ->whereType('deliver')->latest()
+      ->when(
+        $maker,
+        fn ($q) => $q->whereMakerId($maker->id)->whereMadeType($maker::class)
+      );
   }
 
   /**
@@ -65,9 +68,10 @@ trait HasChatEvent
    *
    * @return MorphOne
    */
-  function trashed() {
-    return $this->morphOne(self::config('models.chat_event'), 'made')
-    ->whereType('delete')->latest();
+  function trashed()
+  {
+    return $this->morphOne(Config::config('models.chat_event'), 'made')
+      ->whereType('delete')->latest();
   }
 
   /**
@@ -76,9 +80,10 @@ trait HasChatEvent
    *
    * @return MorphOne
    */
-  function read() {
-    return $this->morphOne(self::config('models.chat_event'), 'made')
-    ->whereType('read')->latest();
+  function read()
+  {
+    return $this->morphOne(Config::config('models.chat_event'), 'made')
+      ->whereType('read')->latest();
   }
 
   /**
@@ -86,15 +91,15 @@ trait HasChatEvent
    *
    *
    */
-  public static function bootHasChatEvent(){
+  public static function bootHasChatEvent()
+  {
     static::deleting(function ($model) {
       if (in_array(SoftDeletes::class, class_uses_recursive($model))) {
-          if (! $model->forceDeleting) {
-              return;
-          }
+        if (!$model->forceDeleting) {
+          return;
+        }
       }
-     self::config('models.chat_event')::whereMadeType(get_class($model))->whereMadeId($model->id)->delete();
+      Config::config('models.chat_event')::whereMadeType(get_class($model))->whereMadeId($model->id)->delete();
     });
-
   }
 }
