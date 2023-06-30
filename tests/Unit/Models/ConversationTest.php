@@ -7,7 +7,7 @@ use Myckhel\ChatSystem\Jobs\Chat\MakeEvent;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Bus;
 
-beforeEach(function() {
+beforeEach(function () {
   $this->conversation = Conversation::inRandomOrder()->first();
   $this->user_id = $this->conversation->user_id;
   $this->message = $this->conversation->messages()->latest()->first();
@@ -19,7 +19,7 @@ beforeEach(function() {
   ];
 });
 
-it('creates a message', function() {
+it('creates a message', function () {
   $message = $this->conversation->createMessage(
     ['user_id' => $this->user_id, 'message' => 'hello']
   );
@@ -30,7 +30,7 @@ it('creates a message', function() {
   ]);
 });
 
-it('creates a message with token', function() {
+it('creates a message with token', function () {
   $timestamp = Carbon::now()->timestamp;
 
   $message = $this->conversation->createMessageWithToken(
@@ -44,22 +44,35 @@ it('creates a message with token', function() {
   ]);
 });
 
-it('replies a message', function() {
-  $reply = [
-    'user_id' => $this->user_id,
-    'message' => 'hello',
-    'reply_id' => $this->message->id,
+it('replies a message', function () {
+  $user = ($this->mockUser)();
+  $user1 = ($this->mockUser)();
+  $conversation = ($this->mockConversation)($user);
+
+  $conversation->addParticipant($user1);
+
+  $messageArr = [
+    'user_id' => $user1->id,
+    'message' => 'hi',
   ];
 
-  $message = $this->conversation->replyMessage(
-    $this->message,
+  $message = $conversation->createMessage($messageArr);
+
+  $reply = [
+    'user_id' => $user1->id,
+    'message' => 'hello',
+    'reply_id' => $message->id,
+  ];
+
+  $replyMessage = $this->conversation->replyMessage(
+    $message,
     $reply
   );
 
-  expect($message)->toMatchArray($reply + ['reply_id' => $this->message->id]);
+  expect($replyMessage)->toMatchArray($reply + ['reply_id' => $message->id]);
 });
 
-it('creates types of messages', function() {
+it('creates types of messages', function () {
   $messageActivity = [
     'user_id' => $this->user_id,
     'message' => 'someone changed the conversation name',
@@ -82,35 +95,37 @@ it('creates types of messages', function() {
   expect($message)->toMatchArray($messageActivity + $messageSystem);
 });
 
-it('adds/removes participant to/from conversation', function() {
+it('adds/removes participant to/from conversation', function () {
   $user = ($this->mockUser)();
+  $user1 = ($this->mockUser)();
+  $conversation = ($this->mockConversation)($user1);
 
-  $participantsCount = $this->conversation->participants()->count();
+  $participantsCount = $conversation->participants()->count();
 
-  $participant = $this->conversation->addParticipant(
+  $participant = $conversation->addParticipant(
     $user,
   );
 
-  $participantsAddedCount = $this->conversation->participants()->count();
+  $participantsAddedCount = $conversation->participants()->count();
 
   expect($participant)->toMatchArray([
     'user_id' => $user->id,
-    'conversation_id' => $this->conversation->id,
+    'conversation_id' => $conversation->id,
   ]);
 
   expect($participantsAddedCount)->toBe($participantsCount + 1);
 
-  $remove = $this->conversation->removeParticipant(
+  $remove = $conversation->removeParticipant(
     $user,
   );
 
-  $participantsRemovedCount = $this->conversation->participants()->count();
+  $participantsRemovedCount = $conversation->participants()->count();
 
   expect($remove)->toBe(true);
   expect($participantsRemovedCount)->toBe($participantsCount);
 });
 
-it('can make a read event', function() {
+it('can make a read event', function () {
   Event::fake([Events::class]);
 
   $readEvent = $this->conversation->makeRead($this->conversation->author);
@@ -120,7 +135,7 @@ it('can make a read event', function() {
   Event::assertDispatched(Events::class);
 });
 
-it('can make a deliver event', function() {
+it('can make a deliver event', function () {
   Event::fake([Events::class]);
 
   $readEvent = $this->conversation->makeDeliver($this->conversation->author);
@@ -130,7 +145,7 @@ it('can make a deliver event', function() {
   Event::assertDispatched(Events::class);
 });
 
-it('can make a delete event', function() {
+it('can make a delete event', function () {
   Event::fake([Events::class]);
 
   $readEvent = $this->conversation->makeDelete($this->conversation->author);
@@ -142,10 +157,10 @@ it('can make a delete event', function() {
 
 /* Relationship Tests */
 
-it('has a last message', function() {
+it('has a last message', function () {
   $user = auth()->user();
   $conversation = $user->conversations()->create([
-    'name'    => $this->faker->name.' Group',
+    'name'    => $this->faker->name . ' Group',
     'user_id' => $user->id,
   ]);
 
@@ -155,14 +170,16 @@ it('has a last message', function() {
   expect($conversation->last_message()->latest('id')->first()->id)->toBe($lMessage->id);
 });
 
-it('has many participants', fn () =>
+it(
+  'has many participants',
+  fn () =>
   expect($this->conversation->participants()->count())->toBeGreaterThan(0)
 );
 
-it('has one latest participant', function() {
+it('has one latest participant', function () {
   $user = auth()->user();
   $conversation = $user->conversations()->create([
-    'name'    => $this->faker->name.' Group',
+    'name'    => $this->faker->name . ' Group',
     'user_id' => $user->id,
   ]);
 
@@ -174,19 +191,23 @@ it('has one latest participant', function() {
   expect($participant->user_id)->toBe($otherUser->id);
 });
 
-it('has one other participant', function() {
-  $otherParticipant = $this->conversation->otherParticipant($this->user_id)->first();
+it('has one other participant', function () {
+  $user = ($this->mockUser)();
+  $user1 = ($this->mockUser)();
+  $conversation = ($this->mockConversation)($user1);
 
-  expect($otherParticipant->user_id)->not->toBe($this->user_id);
+  $otherParticipant = $conversation->otherParticipant($user->id)->first();
+
+  expect($otherParticipant->user_id)->not->toBe($user->id);
 });
 
-it('has many other participants', function() {
+it('has many other participants', function () {
   $otherParticipants = $this->conversation->otherParticipants($this->user_id)->pluck('user_id');
 
   expect(in_array($this->user_id, $otherParticipants->toArray()))->toBe(false);
 });
 
-it('has many messages', function() {
+it('has many messages', function () {
   $this->conversation->createMessage(
     ['user_id' => $this->user_id, 'message' => 'hello1']
   );
@@ -199,12 +220,12 @@ it('has many messages', function() {
   expect($count)->toBeGreaterThan(1);
 });
 
-it('has many unread messages', function() {
+it('has many unread messages', function () {
   $user = ($this->mockUser)();
   $otherUser = ($this->mockUser)();
 
   $conversation = $user->conversations()->create([
-    'name'    => $this->faker->name.' Group',
+    'name'    => $this->faker->name . ' Group',
     'user_id' => $user->id,
   ]);
 
@@ -231,7 +252,7 @@ it('has many unread messages', function() {
 
 /* Query Tests */
 
-it('should query conversations that have at least a message', function() {
+it('should query conversations that have at least a message', function () {
   $user = ($this->mockUser)();
   $otherUser = ($this->mockUser)();
 
@@ -245,7 +266,7 @@ it('should query conversations that have at least a message', function() {
   expect($user->conversations()->whereHasLastMessage()->count())->toBe(1);
 });
 
-it('should query for conversations that doesnt have the user as participant', function() {
+it('should query for conversations that doesnt have the user as participant', function () {
   $user = ($this->mockUser)();
   $otherUser = ($this->mockUser)();
 
@@ -260,7 +281,7 @@ it('should query for conversations that doesnt have the user as participant', fu
 
 /* Collection Tests */
 
-it('should let collection make deliver events', function() {
+it('should let collection make deliver events', function () {
   Bus::fake();
 
   $user = ($this->mockUser)();

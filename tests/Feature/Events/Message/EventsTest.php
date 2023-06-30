@@ -6,8 +6,8 @@ use Myckhel\ChatSystem\Models\Conversation;
 use Myckhel\ChatSystem\Models\ChatEvent;
 use Myckhel\ChatSystem\Events\Message\Created;
 
-beforeEach(function() {
-  $this->conversation = Conversation::inRandomOrder()->first();
+beforeEach(function () {
+  $this->conversation = Conversation::inRandomOrder()->whereHas('messages')->first();
   $this->message = $this->conversation->messages()->latest()->first();
   $this->chatEvent = [
     'maker_type'  => $this->conversation->author::class,
