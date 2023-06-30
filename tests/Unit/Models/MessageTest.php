@@ -1,12 +1,11 @@
 <?php
 
 use Myckhel\ChatSystem\Models\Conversation;
-use Myckhel\ChatSystem\Tests\Models\User;
 use Myckhel\ChatSystem\Events\Message\Events;
 use Illuminate\Support\Facades\Event;
 
-beforeEach(function() {
-  $this->conversation = Conversation::inRandomOrder()->first();
+beforeEach(function () {
+  $this->conversation = Conversation::inRandomOrder()->whereHas('messages')->first();
 
   $this->user_id = $this->conversation->user_id;
 
@@ -23,7 +22,7 @@ beforeEach(function() {
 });
 
 
-it('can make a read event', function() {
+it('can make a read event', function () {
   Event::fake([Events::class]);
 
   $readEvent = $this->conversation->makeRead($this->conversation->author);
@@ -33,7 +32,7 @@ it('can make a read event', function() {
   Event::assertDispatched(Events::class);
 });
 
-it('can make a deliver event', function() {
+it('can make a deliver event', function () {
   Event::fake([Events::class]);
 
   $readEvent = $this->conversation->makeDeliver($this->conversation->author);
@@ -43,7 +42,7 @@ it('can make a deliver event', function() {
   Event::assertDispatched(Events::class);
 });
 
-it('can make a delete event', function() {
+it('can make a delete event', function () {
   Event::fake([Events::class]);
 
   $readEvent = $this->conversation->makeDelete($this->conversation->author);
@@ -53,11 +52,13 @@ it('can make a delete event', function() {
   Event::assertDispatched(Events::class);
 });
 
-it('has isSender attribute', fn () =>
+it(
+  'has isSender attribute',
+  fn () =>
   expect($this->message)->toHaveKey('isSender')
 );
 
-it('check whether all participants - 1 has deleted the message', function() {
+it('check whether all participants - 1 has deleted the message', function () {
   $user = ($this->mockUser)();
   $otherUser = ($this->mockUser)();
   $conversation = ($this->mockConversation)($user);
@@ -77,7 +78,7 @@ it('check whether all participants - 1 has deleted the message', function() {
  * Query Tests
 */
 
-it('adds condition where user is not the message sender to query', function() {
+it('adds condition where user is not the message sender to query', function () {
   $user = ($this->mockUser)();
   $otherUser = ($this->mockUser)();
   $conversation = ($this->mockConversation)($user);
@@ -93,7 +94,7 @@ it('adds condition where user is not the message sender to query', function() {
   expect($conversation->messages()->whereType('user')->whereNotSender($user)->count())->toBe(2);
 });
 
-it('adds condition where message is the given reply', function() {
+it('adds condition where message is the given reply', function () {
   $conversation = $this->conversation;
 
   $replyMessage = $conversation->replyMessage($this->message, ['user_id' => $this->user_id, 'message' => $this->faker->word]);
@@ -101,7 +102,7 @@ it('adds condition where message is the given reply', function() {
   expect($conversation->messages()->whereReply($replyMessage)->first())->toMatchArray($replyMessage->toArray());
 });
 
-it('adds condition where conversation doesnt have chat events', function() {
+it('adds condition where conversation doesnt have chat events', function () {
   $user = ($this->mockUser)();
   $otherUser = ($this->mockUser)();
   $conversation = ($this->mockConversation)($user);
@@ -149,7 +150,7 @@ it('adds condition where conversation doesnt have chat events', function() {
   )->tobe(0);
 });
 
-it('adds query where message have chat events', function() {
+it('adds query where message have chat events', function () {
   $user = ($this->mockUser)();
   $otherUser = ($this->mockUser)();
   $conversation = ($this->mockConversation)($user);
@@ -168,7 +169,7 @@ it('adds query where message have chat events', function() {
   )->tobe(1);
 });
 
-it('adds query where message doesnt have chat events', function() {
+it('adds query where message doesnt have chat events', function () {
   $user = ($this->mockUser)();
   $otherUser = ($this->mockUser)();
   $conversation = ($this->mockConversation)($user);
@@ -187,7 +188,7 @@ it('adds query where message doesnt have chat events', function() {
   )->tobe(1);
 });
 
-it('adds query where message conversation was not deleted after the message was created', function() {
+it('adds query where message conversation was not deleted after the message was created', function () {
   $user = ($this->mockUser)();
   $otherUser = ($this->mockUser)();
   $conversation = ($this->mockConversation)($user);
@@ -212,7 +213,7 @@ it('adds query where message conversation was not deleted after the message was 
 /*
  * Collection Tests
 */
-it('should let collection make events', function() {
+it('should let collection make events', function () {
   Event::fake([Events::class]);
 
   $user = ($this->mockUser)();
@@ -240,22 +241,22 @@ it('should let collection make events', function() {
 
 /* Relationship Tests */
 
-it('belongs to a conversation', function() {
+it('belongs to a conversation', function () {
   $this->message->makeRead($this->message->sender);
   expect($this->message->conversation)->toHaveKeys(['id', 'name']);
 });
 
-it('have many chatEvents', function() {
+it('have many chatEvents', function () {
   $this->message->makeRead($this->message->sender);
   expect($this->message->chatEvents->first())->toHaveKeys(['id', 'maker_id']);
 });
 
-it('belongs to a sender', function() {
+it('belongs to a sender', function () {
   $this->message->makeRead($this->message->sender);
   expect($this->message->sender)->toHaveKeys(['id', 'name']);
 });
 
-it('belongs to a reply of a model', function() {
+it('belongs to a reply of a model', function () {
   $replyMessage = $this->conversation->replyMessage($this->message, ['user_id' => $this->user_id, 'message' => $this->faker->word]);
 
   expect($replyMessage->reply->id)->toBe($this->message->id);
