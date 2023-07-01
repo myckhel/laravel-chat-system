@@ -51,6 +51,7 @@ If you discover any security related issues, please email author email instead o
 ## `Credits`
 
 - [Myckhel][link-author]
+- [Hernan Martinez Reumann][https://github.com/hmreumann]
 - [All Contributors][link-contributors]
 
 ## `License`
