@@ -2,6 +2,7 @@
   "name": "myckhel/laravel-chat-system",
   "description": "laravel chat system",
   "license": "MIT",
+  "version": "1.0.0-beta3",
   "authors": [
     {
       "name": "myckhel",
@@ -16,18 +17,17 @@
   ],
   "require": {
     "php": "^8.2",
-    "illuminate/support": "^10|~11",
-    "nesbot/carbon": "^2.50"
+    "nesbot/carbon": "^2.72.2|^3.0",
+    "illuminate/support": "^10|~11"
   },
   "scripts": {
     "test": "./vendor/bin/pest"
   },
   "require-dev": {
-    "php": "^8.1",
     "fakerphp/faker": "^1.23.0",
-    "orchestra/testbench": "^9",
     "pestphp/pest": "^2.8",
-    "spatie/pest-plugin-test-time": "^2.0"
+    "spatie/pest-plugin-test-time": "^2.0",
+    "orchestra/testbench": "^9"
   },
   "autoload": {
     "psr-4": {
