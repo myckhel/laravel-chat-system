@@ -22,7 +22,7 @@ $ composer require myckhel/laravel-chat-system
 
 ## `Examples`
 ### Laravel Inertia React 
-#### **[Demo](https://laravel-chat-system.herokuapp.com)**
+#### **[Demo](https://laravel-chat.myckhel.com/chat)**
 #### **[Source](https://github.com/myckhel/chat-system-example)**
 
 ### Expo Snack
