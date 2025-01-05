@@ -1,6 +1,6 @@
 <?php
 
-namespace Myckhel\ChatSystem;
+namespace Binkode\ChatSystem;
 
 /**
  *

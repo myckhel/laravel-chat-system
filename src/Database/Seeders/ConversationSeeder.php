@@ -1,12 +1,12 @@
 <?php
 
-namespace Myckhel\ChatSystem\Database\Seeders;
+namespace Binkode\ChatSystem\Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Myckhel\ChatSystem\Models\Conversation;
-use Myckhel\ChatSystem\Models\ConversationUser;
+use Binkode\ChatSystem\Models\Conversation;
+use Binkode\ChatSystem\Models\ConversationUser;
 use Faker\Factory as Faker;
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Config;
 
 class ConversationSeeder extends Seeder
 {
@@ -25,17 +25,17 @@ class ConversationSeeder extends Seeder
     $conversationModel::factory()->count($faker->numberBetween(min(100, count($users)), count($users)))
       ->hasParticipants(
         $faker->numberBetween(3, 5),
-        fn ($attributes, $conversation) =>
+        fn($attributes, $conversation) =>
         [
           'user_id' => $faker->randomElement(
-            collect($users)->filter(fn ($id) => $id != $conversation->user_id)
+            collect($users)->filter(fn($id) => $id != $conversation->user_id)
           ),
           'conversation_id' => $conversation->id,
         ]
       )
       ->hasMessages(
         $faker->numberBetween(1, 5),
-        fn (array $attributes, $conversation) =>
+        fn(array $attributes, $conversation) =>
         [
           'conversation_id' => $conversation->id,
           'user_id' => $faker->randomElement([

@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Queue;
-use Myckhel\ChatSystem\Models\Conversation;
-use Myckhel\ChatSystem\Jobs\Chat\MakeEvent;
+use Binkode\ChatSystem\Models\Conversation;
+use Binkode\ChatSystem\Jobs\Chat\MakeEvent;
 
-beforeEach(function() {
+beforeEach(function () {
   $this->conversation = Conversation::inRandomOrder()->first();
   $this->message = $this->conversation->messages()->latest()->first();
   $this->chatEvent = [

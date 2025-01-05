@@ -1,8 +1,8 @@
 <?php
 
-namespace Myckhel\ChatSystem\Database\Factories;
+namespace Binkode\ChatSystem\Database\Factories;
 
-use Myckhel\ChatSystem\Models\ConversationUser;
+use Binkode\ChatSystem\Models\ConversationUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ConversationUserFactory extends Factory

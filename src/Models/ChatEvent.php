@@ -1,15 +1,15 @@
 <?php
 
-namespace Myckhel\ChatSystem\Models;
+namespace Binkode\ChatSystem\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Myckhel\ChatSystem\Contracts\IChatEventMaker;
-use Myckhel\ChatSystem\Database\Factories\ChatEventFactory;
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Contracts\IChatEventMaker;
+use Binkode\ChatSystem\Database\Factories\ChatEventFactory;
+use Binkode\ChatSystem\Config;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Myckhel\ChatSystem\Contracts\IChatEvent;
+use Binkode\ChatSystem\Contracts\IChatEvent;
 
 class ChatEvent extends Model implements IChatEvent
 {
@@ -25,7 +25,7 @@ class ChatEvent extends Model implements IChatEvent
   /**
    * Adds query where maker is the given user or chat event is for all participants.
    *
-   * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker $user
+   * @param Binkode\ChatSystem\Contarcts\IChatEventMaker $user
    * @return QueryBuilder
    */
   function scopeWithAll($q, IChatEventMaker $user)
@@ -36,12 +36,12 @@ class ChatEvent extends Model implements IChatEvent
   /**
    * adds query where the chat event message sender is not the given user.
    *
-   * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker $user
+   * @param Binkode\ChatSystem\Contarcts\IChatEventMaker $user
    * @return QueryBuilder
    */
   function scopeNotMessenger($q, IChatEventMaker|int $user)
   {
-    $q->whereDoesntHave('message', fn ($q) => $q->whereUserId($user->id ?? $user))->whereType('user');
+    $q->whereDoesntHave('message', fn($q) => $q->whereUserId($user->id ?? $user))->whereType('user');
   }
 
   /**

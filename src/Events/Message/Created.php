@@ -1,6 +1,6 @@
 <?php
 
-namespace Myckhel\ChatSystem\Events\Message;
+namespace Binkode\ChatSystem\Events\Message;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -8,8 +8,8 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Myckhel\ChatSystem\Config;
-use Myckhel\ChatSystem\Contracts\IMessage;
+use Binkode\ChatSystem\Config;
+use Binkode\ChatSystem\Contracts\IMessage;
 
 class Created implements ShouldBroadcast
 {
@@ -30,7 +30,7 @@ class Created implements ShouldBroadcast
 
   public function broadcastAs()
   {
-    return 'App\\Events\\Myckhel\\ChatSystem\\Events\\Message';
+    return 'App\\Events\\Binkode\\ChatSystem\\Events\\Message';
   }
 
   function broadcastWith()
@@ -51,7 +51,7 @@ class Created implements ShouldBroadcast
 
     return array_merge(
       [new PrivateChannel("message-created.{$this->message->conversation_id}")],
-      array_map(fn ($id) => new PrivateChannel("message-new.user.{$id}"), $ids)
+      array_map(fn($id) => new PrivateChannel("message-new.user.{$id}"), $ids)
     );
   }
 }

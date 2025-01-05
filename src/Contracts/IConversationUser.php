@@ -1,5 +1,6 @@
 <?php
-namespace Myckhel\ChatSystem\Contracts;
+
+namespace Binkode\ChatSystem\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -9,5 +10,3 @@ interface IConversationUser
 
   public function conversation(): BelongsTo;
 }
-
-?>

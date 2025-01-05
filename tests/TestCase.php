@@ -1,12 +1,12 @@
 <?php
 
-namespace Myckhel\ChatSystem\Tests;
+namespace Binkode\ChatSystem\Tests;
 
-use Myckhel\ChatSystem\ChatSystem;
-use Myckhel\ChatSystem\ChatSystemServiceProvider;
+use Binkode\ChatSystem\ChatSystem;
+use Binkode\ChatSystem\ChatSystemServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Myckhel\ChatSystem\Tests\Models\User;
-use Myckhel\ChatSystem\Database\Seeders\ConversationSeeder;
+use Binkode\ChatSystem\Tests\Models\User;
+use Binkode\ChatSystem\Database\Seeders\ConversationSeeder;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,7 +19,7 @@ class TestCase extends Orchestra
     $this->setUpDatabase();
 
     Factory::guessFactoryNamesUsing(
-      fn (string $modelName) => 'Myckhel\\ChatSystem\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+      fn(string $modelName) => 'Binkode\\ChatSystem\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
     );
 
     ChatSystem::registerObservers();
@@ -57,7 +57,7 @@ class TestCase extends Orchestra
   protected function createTables(...$modelClasses)
   {
     collect($modelClasses)->each(
-      fn (string $modelClass) => $modelClass::up()
+      fn(string $modelClass) => $modelClass::up()
     );
   }
 

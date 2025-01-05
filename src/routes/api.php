@@ -2,10 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Myckhel\ChatSystem\Http\Controllers\ConversationController;
-use Myckhel\ChatSystem\Http\Controllers\MessageController;
-use Myckhel\ChatSystem\Http\Controllers\ChatEventController;
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Http\Controllers\ConversationController;
+use Binkode\ChatSystem\Http\Controllers\MessageController;
+use Binkode\ChatSystem\Http\Controllers\ChatEventController;
+use Binkode\ChatSystem\Config;
 
 /*
 |--------------------------------------------------------------------------

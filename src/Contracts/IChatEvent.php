@@ -1,5 +1,6 @@
 <?php
-namespace Myckhel\ChatSystem\Contracts;
+
+namespace Binkode\ChatSystem\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -14,5 +15,3 @@ interface IChatEvent
 
   public function made(): MorphTo;
 }
-
-?>

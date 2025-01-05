@@ -1,28 +1,28 @@
 <?php
 
-namespace Myckhel\ChatSystem\Observers;
+namespace Binkode\ChatSystem\Observers;
 
-use Myckhel\ChatSystem\Contracts\IConversation;
+use Binkode\ChatSystem\Contracts\IConversation;
 
 class ConversationObserver
 {
     /**
      * Handle the conversation "created" event.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
+     * @param  \Binkode\ChatSystem\Contracts\IConversation  $conversation
      * @return void
      */
     public function created(IConversation $conversation)
     {
-     // $conversation->participants()->create([
-       // 'user_id' => $conversation->author->id
-     // ]);
+        // $conversation->participants()->create([
+        // 'user_id' => $conversation->author->id
+        // ]);
     }
 
     /**
      * Handle the conversation "updated" event.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
+     * @param  \Binkode\ChatSystem\Contracts\IConversation  $conversation
      * @return void
      */
     public function updated(IConversation $conversation)
@@ -33,7 +33,7 @@ class ConversationObserver
     /**
      * Handle the conversation "deleted" event.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
+     * @param  \Binkode\ChatSystem\Contracts\IConversation  $conversation
      * @return void
      */
     public function deleted(IConversation $conversation)
@@ -44,7 +44,7 @@ class ConversationObserver
     /**
      * Handle the conversation "restored" event.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
+     * @param  \Binkode\ChatSystem\Contracts\IConversation  $conversation
      * @return void
      */
     public function restored(IConversation $conversation)
@@ -55,7 +55,7 @@ class ConversationObserver
     /**
      * Handle the conversation "force deleted" event.
      *
-     * @param  \Myckhel\ChatSystem\Contracts\IConversation  $conversation
+     * @param  \Binkode\ChatSystem\Contracts\IConversation  $conversation
      * @return void
      */
     public function forceDeleted(IConversation $conversation)

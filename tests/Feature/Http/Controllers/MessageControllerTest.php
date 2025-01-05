@@ -1,11 +1,11 @@
 <?php
 
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Config;
 
 beforeEach(function () {
   $this->user = auth()->user();
   $this->conversation = ($this->mockConversation)($this->user);
-  $this->mockMessage = fn ($conversation, $user) => $conversation->createMessage(['user_id' => $user->id ?? $user, 'message' => $this->faker->sentence]);
+  $this->mockMessage = fn($conversation, $user) => $conversation->createMessage(['user_id' => $user->id ?? $user, 'message' => $this->faker->sentence]);
   $this->message = ($this->mockMessage)($this->conversation, $this->user);
 });
 

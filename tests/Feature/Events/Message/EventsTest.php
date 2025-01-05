@@ -1,10 +1,10 @@
 <?php
 
-use Myckhel\ChatSystem\Events\Message\Events;
+use Binkode\ChatSystem\Events\Message\Events;
 use Illuminate\Support\Facades\Event;
-use Myckhel\ChatSystem\Models\Conversation;
-use Myckhel\ChatSystem\Models\ChatEvent;
-use Myckhel\ChatSystem\Events\Message\Created;
+use Binkode\ChatSystem\Models\Conversation;
+use Binkode\ChatSystem\Models\ChatEvent;
+use Binkode\ChatSystem\Events\Message\Created;
 
 beforeEach(function () {
   $this->conversation = Conversation::inRandomOrder()->whereHas('messages')->first();

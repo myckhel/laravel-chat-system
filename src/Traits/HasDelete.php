@@ -1,12 +1,15 @@
 <?php
-namespace Myckhel\ChatSystem\Traits;
+
+namespace Binkode\ChatSystem\Traits;
+
 /**
  *
  */
 trait HasDelete
 {
-  static function deleteChildren($model, string $relation){
-    if(static::canDeleteRelation($model)){
+  static function deleteChildren($model, string $relation)
+  {
+    if (static::canDeleteRelation($model)) {
       // $model->{$relation}()->chunkById(500, function ($child) {
       //   $child->fireModelEvent('deleting');
       //   // Here, we'll touch the owning models, verifying these timestamps get updated
@@ -19,11 +22,12 @@ trait HasDelete
     }
   }
 
-  static function canDeleteRelation($model){
+  static function canDeleteRelation($model)
+  {
     if (in_array(SoftDeletes::class, class_uses_recursive($model))) {
-        if (! $model->forceDeleting) {
-            return false;
-        }
+      if (! $model->forceDeleting) {
+        return false;
+      }
     }
     return true;
   }

@@ -1,14 +1,15 @@
 <?php
 
-use Myckhel\ChatSystem\Models\Conversation;
-use Myckhel\ChatSystem\Models\ChatEvent;
+use Binkode\ChatSystem\Models\Conversation;
+use Binkode\ChatSystem\Models\ChatEvent;
 
-beforeEach(function() {
+beforeEach(function () {
   $this->conversation = Conversation::inRandomOrder()->first();
-  $this->mockMessage = fn ($conversation, $user) =>
-    $conversation->createMessage([
-      'user_id' => $user->id ?? $user, 'message' => $this->faker->sentence
-    ]);
+  $this->mockMessage = fn($conversation, $user) =>
+  $conversation->createMessage([
+    'user_id' => $user->id ?? $user,
+    'message' => $this->faker->sentence
+  ]);
 
   $this->mockChatEvent = function ($model = 'Message', &$otherUser = null, &$user = null, &$conversation = null, &$mockedModel = null, $event = 'Delivered', $all = null) {
     $otherUser = ($this->mockUser)();
@@ -25,7 +26,7 @@ beforeEach(function() {
 
     $args = [];
 
-    if($all) {
+    if ($all) {
       $args['row'] = true;
       $args['all'] = $all;
     }
@@ -39,12 +40,12 @@ beforeEach(function() {
 
 /* Relationship Tests */
 
-it('belongs to a user model', function() {
+it('belongs to a user model', function () {
   $participant = $this->conversation->participant;
   expect($participant->user->toArray())->toHaveKeys(['id', 'name']);
 });
 
-it('belongs to a conversation model', function() {
+it('belongs to a conversation model', function () {
   $participant = $this->conversation->participant;
 
   expect($participant->conversation->toArray())->toHaveKeys(['id', 'name', 'user_id', 'type']);

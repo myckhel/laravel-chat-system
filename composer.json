@@ -1,8 +1,8 @@
 {
-  "name": "myckhel/laravel-chat-system",
+  "name": "binkode/laravel-chat-system",
   "description": "laravel chat system",
   "license": "MIT",
-  "version": "1.0.0-beta3",
+  "version": "1.0.0-beta.4",
   "authors": [
     {
       "name": "myckhel",
@@ -10,7 +10,7 @@
       "homepage": "https://myckhel.com"
     }
   ],
-  "homepage": "https://github.com/myckhel/laravel-chat-system",
+  "homepage": "https://github.com/binkode/laravel-chat-system",
   "keywords": [
     "Laravel",
     "ChatSystem"
@@ -31,21 +31,21 @@
   },
   "autoload": {
     "psr-4": {
-      "Myckhel\\ChatSystem\\": "src/"
+      "Binkode\\ChatSystem\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Myckhel\\ChatSystem\\Tests\\": "tests"
+      "Binkode\\ChatSystem\\Tests\\": "tests"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Myckhel\\ChatSystem\\ChatSystemServiceProvider"
+        "Binkode\\ChatSystem\\ChatSystemServiceProvider"
       ],
       "aliases": {
-        "ChatSystem": "Myckhel\\ChatSystem\\Facades\\ChatSystem"
+        "ChatSystem": "Binkode\\ChatSystem\\Facades\\ChatSystem"
       }
     }
   },
