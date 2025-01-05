@@ -2,14 +2,14 @@
 <rss version="2.0">
     <channel>
         <title>Laravel Chat System Blog</title>
-        <link>https://myckhel.github.io/laravel-chat-system/blog</link>
+        <link>https://binkode.github.io/laravel-chat-system/blog</link>
         <description>Laravel Chat System Blog</description>
         <lastBuildDate>Wed, 29 May 2019 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <item>
             <title><![CDATA[Hello]]></title>
-            <link>https://myckhel.github.io/laravel-chat-system/blog/hello-world</link>
+            <link>https://binkode.github.io/laravel-chat-system/blog/hello-world</link>
             <guid>hello-world</guid>
             <pubDate>Wed, 29 May 2019 00:00:00 GMT</pubDate>
             <description><![CDATA[Welcome to this blog. This blog is created with Docusaurus 2 alpha.]]></description>
