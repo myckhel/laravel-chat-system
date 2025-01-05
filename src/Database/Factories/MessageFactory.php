@@ -1,11 +1,11 @@
 <?php
 
-namespace Myckhel\ChatSystem\Database\Factories;
+namespace Binkode\ChatSystem\Database\Factories;
 
-use Myckhel\ChatSystem\Models\Message;
-use Myckhel\ChatSystem\Models\ChatEvent;
+use Binkode\ChatSystem\Models\Message;
+use Binkode\ChatSystem\Models\ChatEvent;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Config;
 
 class MessageFactory extends Factory
 {
@@ -38,7 +38,7 @@ class MessageFactory extends Factory
           'maker_id'    => $this->faker->randomElement([
             $message->user_id,
             $message->load([
-              'conversation' => fn ($q) =>
+              'conversation' => fn($q) =>
               $q->whereNotParticipant($message->user_id)->with('participant')
             ])->conversation->participant->user_id,
           ]),

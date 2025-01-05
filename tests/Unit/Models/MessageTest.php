@@ -1,7 +1,7 @@
 <?php
 
-use Myckhel\ChatSystem\Models\Conversation;
-use Myckhel\ChatSystem\Events\Message\Events;
+use Binkode\ChatSystem\Models\Conversation;
+use Binkode\ChatSystem\Events\Message\Events;
 use Illuminate\Support\Facades\Event;
 
 beforeEach(function () {
@@ -18,7 +18,7 @@ beforeEach(function () {
     'made_id'     => $this->conversation->id,
   ];
 
-  $this->mockMessage = fn ($conversation, $user) => $conversation->createMessage(['user_id' => $user->id ?? $user, 'message' => $this->faker->sentence]);
+  $this->mockMessage = fn($conversation, $user) => $conversation->createMessage(['user_id' => $user->id ?? $user, 'message' => $this->faker->sentence]);
 });
 
 
@@ -54,7 +54,7 @@ it('can make a delete event', function () {
 
 it(
   'has isSender attribute',
-  fn () =>
+  fn() =>
   expect($this->message)->toHaveKey('isSender')
 );
 
@@ -164,7 +164,7 @@ it('adds query where message have chat events', function () {
 
   expect(
     $conversation->messages()->whereType('user')
-      ->hasEvent(fn ($q) => $q->whereMakerId($otherUser->id))
+      ->hasEvent(fn($q) => $q->whereMakerId($otherUser->id))
       ->count()
   )->tobe(1);
 });
@@ -183,7 +183,7 @@ it('adds query where message doesnt have chat events', function () {
 
   expect(
     $conversation->messages()->whereType('user')
-      ->hasNoEvent(fn ($q) => $q->whereMakerId($otherUser->id))
+      ->hasNoEvent(fn($q) => $q->whereMakerId($otherUser->id))
       ->count()
   )->tobe(1);
 });

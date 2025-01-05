@@ -1,9 +1,9 @@
 <?php
 
-use Myckhel\ChatSystem\Models\Conversation;
+use Binkode\ChatSystem\Models\Conversation;
 use Carbon\Carbon;
-use Myckhel\ChatSystem\Events\Message\Events;
-use Myckhel\ChatSystem\Jobs\Chat\MakeEvent;
+use Binkode\ChatSystem\Events\Message\Events;
+use Binkode\ChatSystem\Jobs\Chat\MakeEvent;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Bus;
 
@@ -172,7 +172,7 @@ it('has a last message', function () {
 
 it(
   'has many participants',
-  fn () =>
+  fn() =>
   expect($this->conversation->participants()->count())->toBeGreaterThan(0)
 );
 

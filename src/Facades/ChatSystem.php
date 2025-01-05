@@ -1,6 +1,6 @@
 <?php
 
-namespace Myckhel\ChatSystem\Facades;
+namespace Binkode\ChatSystem\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

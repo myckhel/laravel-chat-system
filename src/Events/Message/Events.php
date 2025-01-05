@@ -1,6 +1,6 @@
 <?php
 
-namespace Myckhel\ChatSystem\Events\Message;
+namespace Binkode\ChatSystem\Events\Message;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -9,9 +9,9 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Myckhel\ChatSystem\Models\Message;
-use Myckhel\ChatSystem\Config;
-use Myckhel\ChatSystem\Contracts\IChatEvent;
+use Binkode\ChatSystem\Models\Message;
+use Binkode\ChatSystem\Config;
+use Binkode\ChatSystem\Contracts\IChatEvent;
 
 class Events implements ShouldBroadcast
 {
@@ -39,7 +39,7 @@ class Events implements ShouldBroadcast
 
   public function broadcastAs()
   {
-    return "Myckhel\\ChatSystem\\Events\\Message";
+    return "Binkode\\ChatSystem\\Events\\Message";
   }
 
   public function broadcastWhen()
@@ -61,7 +61,7 @@ class Events implements ShouldBroadcast
       return new PrivateChannel("message-event.user.{$this->event->maker_id}");
     } else {
       $participant_ids = $event->made->participants()->pluck('user_id')->toArray();
-      return array_map(fn ($id) => new PrivateChannel("message-event.user.{$id}"), $participant_ids);
+      return array_map(fn($id) => new PrivateChannel("message-event.user.{$id}"), $participant_ids);
     }
   }
 }

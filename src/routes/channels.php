@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
-use Myckhel\ChatSystem\Broadcasting\Chat\MessageChannel;
-use Myckhel\ChatSystem\Broadcasting\Chat\ConversationChannel;
-use Myckhel\ChatSystem\Broadcasting\Chat\UserMessageChannel;
+use Binkode\ChatSystem\Broadcasting\Chat\MessageChannel;
+use Binkode\ChatSystem\Broadcasting\Chat\ConversationChannel;
+use Binkode\ChatSystem\Broadcasting\Chat\UserMessageChannel;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +15,7 @@ use Myckhel\ChatSystem\Broadcasting\Chat\UserMessageChannel;
 | used to check if an authenticated user can listen to the channel.
 |
 */
+
 Broadcast::channel('message-created.{conversation}', ConversationChannel::class);
 Broadcast::channel('message-new.user.{user}', UserMessageChannel::class);
 Broadcast::channel('message-event.user.{user}', UserMessageChannel::class);

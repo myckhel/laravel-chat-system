@@ -1,5 +1,6 @@
 <?php
-namespace Myckhel\ChatSystem\Contracts;
+
+namespace Binkode\ChatSystem\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -12,5 +13,3 @@ interface IConversation
 
   public function otherParticipant(IChatEventMaker $user = null): HasOne;
 }
-
-?>

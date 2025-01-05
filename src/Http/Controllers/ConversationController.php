@@ -1,11 +1,11 @@
 <?php
 
-namespace Myckhel\ChatSystem\Http\Controllers;
+namespace Binkode\ChatSystem\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Myckhel\ChatSystem\Http\Requests\PaginableRequest;
+use Binkode\ChatSystem\Http\Requests\PaginableRequest;
 use DB;
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Config;
 
 class ConversationController extends Controller
 {
@@ -25,28 +25,28 @@ class ConversationController extends Controller
 
     $eventColumns = ['id', 'maker_id', 'made_type', 'made_id', 'created_at'];
 
-    $queryEvent = fn ($q) => $q->select($eventColumns)->notMessenger($user->id);
+    $queryEvent = fn($q) => $q->select($eventColumns)->notMessenger($user->id);
 
     $conversations = $user->conversations()
       ->whereHasLastMessage($user)
       ->withCount([
-        'messages as latest_message_at' => fn ($q) => $q->select(DB::raw('max(created_at)')),
-        'participant as isParticipant'  => fn ($q) => $q->whereUserId($user->id),
-        'unread' => fn ($q) => $q->whereNotSender($user->id),
+        'messages as latest_message_at' => fn($q) => $q->select(DB::raw('max(created_at)')),
+        'participant as isParticipant'  => fn($q) => $q->whereUserId($user->id),
+        'unread' => fn($q) => $q->whereNotSender($user->id),
       ])
       ->orderByDesc('latest_message_at')
       ->with([
         // 'chatEvents' => fn ($q) => $q->groupBy('chat_events.id', 'chat_events.maker_type', 'chat_events.maker_id', 'chat_events.made_type', 'chat_events.made_id', 'chat_events.all', 'chat_events.created_at', 'chat_events.updated_at'),
-        'delivered'      => fn ($q) => $queryEvent($q)->where('maker_id', '!=', $user->id),
-        'read'          => fn ($q) => $queryEvent($q)->where('maker_id', '!=', $user->id),
+        'delivered'      => fn($q) => $queryEvent($q)->where('maker_id', '!=', $user->id),
+        'read'          => fn($q) => $queryEvent($q)->where('maker_id', '!=', $user->id),
         'trashed'       => $queryEvent,
-        'last_message' => fn ($q) => $q->select(['id', 'user_id', 'message', 'conversation_id', 'created_at'])
+        'last_message' => fn($q) => $q->select(['id', 'user_id', 'message', 'conversation_id', 'created_at'])
           ->with([
             // 'latestMedia' => fn ($q) => $q->select('id', 'model_type', 'model_id', 'name'),
-            'trashed' => fn ($q) => $q->withAll($user)
+            'trashed' => fn($q) => $q->withAll($user)
           ]),
-        'participant' => fn ($q) => $q->select('id', 'user_id', 'conversation_id')->where('user_id', '!=', $user->id),
-        'participant.user' => fn ($q) => $q, //->withUrls(['avatar']),
+        'participant' => fn($q) => $q->select('id', 'user_id', 'conversation_id')->where('user_id', '!=', $user->id),
+        'participant.user' => fn($q) => $q, //->withUrls(['avatar']),
       ])->paginate($pageSize);
 
     $conversations->makeDeliver($user);
@@ -97,7 +97,7 @@ class ConversationController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  \Myckhel\ChatSystem\Models\Conversation  $conversation
+   * @param  \Binkode\ChatSystem\Models\Conversation  $conversation
    * @return \Illuminate\Http\Response
    */
   public function show(Request $request, $conversation)
@@ -111,7 +111,7 @@ class ConversationController extends Controller
 
     if ($conversation->type === 'private') {
       $conversation->load([
-        'participant' => fn ($q) => $q->select(['id', 'conversation_id', 'user_id'])->where('user_id', '!=', $user->id),
+        'participant' => fn($q) => $q->select(['id', 'conversation_id', 'user_id'])->where('user_id', '!=', $user->id),
         'participant.user:id,name'
       ]);
 
@@ -127,7 +127,7 @@ class ConversationController extends Controller
    * Update the specified resource in storage.
    *
    * @param  \Illuminate\Http\Request  $request
-   * @param  \Myckhel\ChatSystem\Models\Conversation  $conversation
+   * @param  \Binkode\ChatSystem\Models\Conversation  $conversation
    * @return \Illuminate\Http\Response
    */
   public function update(Request $request, $conversation)
@@ -156,7 +156,7 @@ class ConversationController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  \Myckhel\ChatSystem\Models\Conversation  $conversation
+   * @param  \Binkode\ChatSystem\Models\Conversation  $conversation
    * @return \Illuminate\Http\Response
    */
   public function destroy(Request $request, $conversation)
@@ -179,7 +179,7 @@ class ConversationController extends Controller
     return $user->conversations()
       ->whereNotTrashed($user->id)
       ->whereHasLastMessage($user)
-      ->when($type, fn ($q) => $q->whereHas($type))
+      ->when($type, fn($q) => $q->whereHas($type))
       ->count();
   }
 

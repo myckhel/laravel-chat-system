@@ -1,6 +1,6 @@
 <?php
 
-namespace Myckhel\ChatSystem\Http\Requests;
+namespace Binkode\ChatSystem\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,9 +24,9 @@ class PaginableRequest extends FormRequest
     public function rules()
     {
         return [
-          'orderBy'     => '',
-          'order'       => 'in:asc,desc',
-          'pageSize'    => 'int',
+            'orderBy'     => '',
+            'order'       => 'in:asc,desc',
+            'pageSize'    => 'int',
         ];
     }
 }

@@ -1,13 +1,14 @@
 <?php
 
-use Myckhel\ChatSystem\Models\Conversation;
-use Myckhel\ChatSystem\Models\ChatEvent;
+use Binkode\ChatSystem\Models\Conversation;
+use Binkode\ChatSystem\Models\ChatEvent;
 
 beforeEach(function () {
   $this->conversation = Conversation::inRandomOrder()->first();
-  $this->mockMessage = fn ($conversation, $user) =>
+  $this->mockMessage = fn($conversation, $user) =>
   $conversation->createMessage([
-    'user_id' => $user->id ?? $user, 'message' => $this->faker->sentence
+    'user_id' => $user->id ?? $user,
+    'message' => $this->faker->sentence
   ]);
 
   $this->mockChatEvent = function ($model = 'Message', &$otherUser = null, &$user = null, &$conversation = null, &$mockedModel = null, $event = 'Deliver', $all = null) {

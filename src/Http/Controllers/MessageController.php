@@ -1,14 +1,14 @@
 <?php
 
-namespace Myckhel\ChatSystem\Http\Controllers;
+namespace Binkode\ChatSystem\Http\Controllers;
 
-use Myckhel\ChatSystem\Models\Message;
+use Binkode\ChatSystem\Models\Message;
 use Illuminate\Http\Request;
-use Myckhel\ChatSystem\Http\Requests\PaginableRequest;
+use Binkode\ChatSystem\Http\Requests\PaginableRequest;
 use Illuminate\Validation\Rule;
-use Myckhel\ChatSystem\Events\Message\Created;
-// use Myckhel\ChatSystem\Notifications\Message\Created as CreatedMessage;
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Events\Message\Created;
+// use Binkode\ChatSystem\Notifications\Message\Created as CreatedMessage;
+use Binkode\ChatSystem\Config;
 
 class MessageController extends Controller
 {
@@ -25,7 +25,7 @@ class MessageController extends Controller
       'other_user_id'      => 'int',
       'reply_id'           => 'int',
       'reply_type'         => [
-        Rule::requiredIf(fn () => $request->reply_id),
+        Rule::requiredIf(fn() => $request->reply_id),
         "in:" . Config::config('models.message'),
       ],
     ]);
@@ -37,7 +37,7 @@ class MessageController extends Controller
     $reply    = [];
     $with     = [
       'reply',
-      'trashed' => fn ($q) => $q->withAll($user),
+      'trashed' => fn($q) => $q->withAll($user),
       'sender',
     ];
 
@@ -86,12 +86,12 @@ class MessageController extends Controller
       'type'            => $type,
     ] = $request->validate([
       'conversation_id' => 'int',
-      'other_user_id'   => ['int', Rule::requiredIf(fn () => !$request->conversation_id)],
+      'other_user_id'   => ['int', Rule::requiredIf(fn() => !$request->conversation_id)],
       'message'         => '',
       'reply_id'        => 'int',
       'token'           => '',
       'reply_type'      => [
-        Rule::requiredIf(fn () => $request->reply_id),
+        Rule::requiredIf(fn() => $request->reply_id),
         "in:" . Config::config('models.message'),
       ],
       'type'            => 'in:user,activity',
@@ -115,8 +115,8 @@ class MessageController extends Controller
     $message = $conversation->messages()
       ->when(
         $token,
-        fn ($q) => $q->where('metas->token', $token),
-        fn ($q) => $q->whereNull('id')
+        fn($q) => $q->where('metas->token', $token),
+        fn($q) => $q->whereNull('id')
       )
       ->firstOrCreate(
         [],
@@ -149,7 +149,7 @@ class MessageController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  \Myckhel\ChatSystem\Models\Message  $message
+   * @param  \Binkode\ChatSystem\Models\Message  $message
    * @return \Illuminate\Http\Response
    */
   public function show($message)
@@ -162,7 +162,7 @@ class MessageController extends Controller
    * Update the specified resource in storage.
    *
    * @param  \Illuminate\Http\Request  $request
-   * @param  \Myckhel\ChatSystem\Models\Message  $message
+   * @param  \Binkode\ChatSystem\Models\Message  $message
    * @return \Illuminate\Http\Response
    */
   public function update(Request $request, Message $message)
@@ -173,7 +173,7 @@ class MessageController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  \Myckhel\ChatSystem\Models\Message  $message
+   * @param  \Binkode\ChatSystem\Models\Message  $message
    * @return \Illuminate\Http\Response
    */
   public function destroy(Request $request, $message)

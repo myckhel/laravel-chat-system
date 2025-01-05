@@ -1,14 +1,14 @@
 <?php
 
-namespace Myckhel\ChatSystem\Jobs\Chat;
+namespace Binkode\ChatSystem\Jobs\Chat;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Myckhel\ChatSystem\Models\Message;
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Models\Message;
+use Binkode\ChatSystem\Config;
 
 class MakeEvent implements ShouldQueue
 {
@@ -46,11 +46,11 @@ class MakeEvent implements ShouldQueue
         ->whereDoesntHaveChatEvents(
           'deliver',
           $this->user->id,
-          fn ($q) =>
+          fn($q) =>
           $q->whereIn('id', $conversation->pluck('id'))
         )->where('user_id', '!=', $this->user->id)->get();
 
-      $undelivered->map(fn ($msg) => $msg->conversation->makeDeliver($this->user));
+      $undelivered->map(fn($msg) => $msg->conversation->makeDeliver($this->user));
     }
   }
 }

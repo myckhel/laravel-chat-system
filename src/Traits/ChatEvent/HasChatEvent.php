@@ -1,8 +1,8 @@
 <?php
 
-namespace Myckhel\ChatSystem\Traits\ChatEvent;
+namespace Binkode\ChatSystem\Traits\ChatEvent;
 
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Config;
 
 /**
  *
@@ -18,7 +18,7 @@ trait HasChatEvent
    */
   function scopeWhereNotTrashed($q, $maker_id)
   {
-    $q->whereDoesntHave('trashed', fn ($q) => $q->where('all', true)->orWhere('maker_id', $maker_id));
+    $q->whereDoesntHave('trashed', fn($q) => $q->where('all', true)->orWhere('maker_id', $maker_id));
   }
 
   /**
@@ -58,7 +58,7 @@ trait HasChatEvent
       ->whereType('deliver')->latest()
       ->when(
         $maker,
-        fn ($q) => $q->whereMakerId($maker->id)->whereMadeType($maker::class)
+        fn($q) => $q->whereMakerId($maker->id)->whereMadeType($maker::class)
       );
   }
 

@@ -1,5 +1,6 @@
 <?php
-namespace Myckhel\ChatSystem\Contracts;
+
+namespace Binkode\ChatSystem\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -15,5 +16,3 @@ interface IMessage
 
   public function reply(): MorphTo;
 }
-
-?>

@@ -1,24 +1,26 @@
 <?php
 
-namespace Myckhel\ChatSystem;
+namespace Binkode\ChatSystem;
 
 use Illuminate\Support\ServiceProvider;
 
-class ChatSystemServiceProvider extends ServiceProvider {
+class ChatSystemServiceProvider extends ServiceProvider
+{
   /**
    * Perform post-registration booting of services.
    *
    * @return void
    */
-  public function boot(): void {
-    // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'myckhel');
-    // $this->loadViewsFrom(__DIR__.'/../resources/views', 'myckhel');
+  public function boot(): void
+  {
+    // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'binkode');
+    // $this->loadViewsFrom(__DIR__.'/../resources/views', 'binkode');
     // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-    $this->loadRoutesFrom(__DIR__.'/routes/api.php');
+    $this->loadRoutesFrom(__DIR__ . '/routes/api.php');
 
     // Publishing is only necessary when using the CLI.
     if ($this->app->runningInConsole()) {
-        $this->bootForConsole();
+      $this->bootForConsole();
     }
   }
 
@@ -27,12 +29,15 @@ class ChatSystemServiceProvider extends ServiceProvider {
    *
    * @return void
    */
-  function register(): void {
-    $this->mergeConfigFrom(__DIR__.'/../config/chat-system.php', 'chat-system');
+  function register(): void
+  {
+    $this->mergeConfigFrom(__DIR__ . '/../config/chat-system.php', 'chat-system');
 
     // Register the service the package provides.
-    $this->app->singleton('chat-system', fn ($app) =>
-        new ChatSystem
+    $this->app->singleton(
+      'chat-system',
+      fn($app) =>
+      new ChatSystem
     );
   }
 
@@ -41,7 +46,8 @@ class ChatSystemServiceProvider extends ServiceProvider {
    *
    * @return array
    */
-  function provides(){
+  function provides()
+  {
     return ['chat-system'];
   }
 
@@ -50,42 +56,43 @@ class ChatSystemServiceProvider extends ServiceProvider {
    *
    * @return void
    */
-  function bootForConsole(): void {
+  function bootForConsole(): void
+  {
     // Publishing the configuration file.
     $this->publishes([
-        __DIR__.'/../config/chat-system.php' => config_path('chat-system.php'),
+      __DIR__ . '/../config/chat-system.php' => config_path('chat-system.php'),
     ], 'config');
 
     // Publishing the migration file.
     if (! class_exists('CreateConversationsTable')) {
-        $this->publishes([
-            __DIR__.'/../database/migrations' => database_path('migrations'),
-        ], 'migrations');
+      $this->publishes([
+        __DIR__ . '/../database/migrations' => database_path('migrations'),
+      ], 'migrations');
     }
 
     // Publishing the views.
     /*$this->publishes([
-        __DIR__.'/../resources/views' => base_path('resources/views/vendor/myckhel'),
+        __DIR__.'/../resources/views' => base_path('resources/views/vendor/binkode'),
     ], 'chat-system.views');*/
 
     // Publishing the seeders.
     $this->publishes([
-        __DIR__.'/database/seeders' => database_path('seeders'),
+      __DIR__ . '/database/seeders' => database_path('seeders'),
     ], 'seeders');
 
     // Publishing the factories.
     $this->publishes([
-        __DIR__.'/database/factories' => database_path('factories'),
+      __DIR__ . '/database/factories' => database_path('factories'),
     ], 'factories');
 
     // Publishing assets.
     /*$this->publishes([
-        __DIR__.'/../resources/assets' => public_path('vendor/myckhel'),
+        __DIR__.'/../resources/assets' => public_path('vendor/binkode'),
     ], 'chat-system.views');*/
 
     // Publishing the translation files.
     /*$this->publishes([
-        __DIR__.'/../resources/lang' => resource_path('lang/vendor/myckhel'),
+        __DIR__.'/../resources/lang' => resource_path('lang/vendor/binkode'),
     ], 'chat-system.views');*/
 
     // Registering package commands.

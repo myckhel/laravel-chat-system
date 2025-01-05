@@ -1,6 +1,6 @@
 <?php
 
-namespace Myckhel\ChatSystem\Models;
+namespace Binkode\ChatSystem\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Collection;
 // use App\Traits\HasVideo;
 // use App\Traits\HasImage;
 use Carbon\Carbon;
-use Myckhel\ChatSystem\Traits\ChatEvent\HasChatEvent;
-use Myckhel\ChatSystem\Contracts\IChatEventMaker;
-use Myckhel\ChatSystem\Database\Factories\MessageFactory;
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Traits\ChatEvent\HasChatEvent;
+use Binkode\ChatSystem\Contracts\IChatEventMaker;
+use Binkode\ChatSystem\Database\Factories\MessageFactory;
+use Binkode\ChatSystem\Config;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Myckhel\ChatSystem\Contracts\IMessage;
+use Binkode\ChatSystem\Contracts\IMessage;
 
 class Message extends Model implements IMessage
 {
@@ -29,7 +29,7 @@ class Message extends Model implements IMessage
   /**
    * adds query to to exclude the given user
    *
-   * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker $user
+   * @param Binkode\ChatSystem\Contarcts\IChatEventMaker $user
    * @return QueryBuilder
    */
   function scopeWhereNotSender($q, IChatEventMaker|int $user = null)
@@ -48,10 +48,10 @@ class Message extends Model implements IMessage
   {
     $q->when(
       $reply['reply_id'] ?? null,
-      fn ($q) => $q->whereReplyId($reply['reply_id'])
+      fn($q) => $q->whereReplyId($reply['reply_id'])
     )->when(
       $reply['reply_type'] ?? null,
-      fn ($q) => $q->whereReplyType($reply['reply_type'])
+      fn($q) => $q->whereReplyType($reply['reply_type'])
     );
   }
 
@@ -64,7 +64,7 @@ class Message extends Model implements IMessage
    * adds query where message doesn't have chatEvents
    *
    * @param string|null $type
-   * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $user
+   * @param Binkode\ChatSystem\Contarcts\IChatEventMaker|null $user
    * @param Closure|null $conversationScope
    * @return QueryBuilder
    */
@@ -75,18 +75,18 @@ class Message extends Model implements IMessage
     if ($type == 'delete') {
       $q->whereDoesntHave(
         'chatEvents',
-        fn ($q) =>
+        fn($q) =>
         $q->whereMakerId($user_id)->whereType($type)
       );
     } else {
       $q->whereHas(
         'conversation',
-        fn ($q) =>
+        fn($q) =>
         $q->whereDoesntHave(
           'chatEvents',
-          fn ($q) =>
+          fn($q) =>
           $q->whereMakerId($user_id)
-            ->when($type, fn ($q) => $q->whereType($type))
+            ->when($type, fn($q) => $q->whereType($type))
             ->whereColumn('created_at', '>', 'messages.created_at')
         )->when($conversationScope, $conversationScope)
       );
@@ -96,7 +96,7 @@ class Message extends Model implements IMessage
   /**
    * adds query where message is not read by the given user
    *
-   * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $user
+   * @param Binkode\ChatSystem\Contarcts\IChatEventMaker|null $user
    * @return QueryBuilder
    */
   function scopeWhereNotReadBy($q, IChatEventMaker|int $user)
@@ -107,7 +107,7 @@ class Message extends Model implements IMessage
   /**
    * adds query where message is not delivered to the given user
    *
-   * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $user
+   * @param Binkode\ChatSystem\Contarcts\IChatEventMaker|null $user
    * @return QueryBuilder
    */
   function scopeWhereNotDeliveredTo($q, IChatEventMaker|int $user)
@@ -118,7 +118,7 @@ class Message extends Model implements IMessage
   /**
    * adds query where message is not deleted by the given user
    *
-   * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $user
+   * @param Binkode\ChatSystem\Contarcts\IChatEventMaker|null $user
    * @return QueryBuilder
    */
   function scopeWhereNotDeletedBy($q, IChatEventMaker|int $user)
@@ -129,15 +129,15 @@ class Message extends Model implements IMessage
   /**
    * adds query where message has participant = user
    *
-   * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $user
+   * @param Binkode\ChatSystem\Contarcts\IChatEventMaker|null $user
    * @return QueryBuilder
    */
   function scopeWhereRelatedTo($q, IChatEventMaker|int $user)
   {
     $q->whereHas(
       'conversation',
-      fn ($q) =>
-      $q->whereHas('participants', fn ($q) => $q->whereUserId($user->id ?? $user))
+      fn($q) =>
+      $q->whereHas('participants', fn($q) => $q->whereUserId($user->id ?? $user))
     );
   }
 
@@ -151,7 +151,7 @@ class Message extends Model implements IMessage
   {
     $q->whereHas(
       'chatEvents',
-      fn ($q) =>
+      fn($q) =>
       $q->when($eventScope, $eventScope)
     );
   }
@@ -166,7 +166,7 @@ class Message extends Model implements IMessage
   {
     $q->whereDoesntHave(
       'chatEvents',
-      fn ($q) =>
+      fn($q) =>
       $q->when($eventScope, $eventScope)
     );
   }
@@ -174,20 +174,20 @@ class Message extends Model implements IMessage
   /**
    * query where message's conversation has not been deleted
    *
-   * @param Myckhel\ChatSystem\Contarcts\IChatEventMaker|null $by
+   * @param Binkode\ChatSystem\Contarcts\IChatEventMaker|null $by
    * @return QueryBuilder
    */
   function scopeWhereConversationWasntDeleted($q, IChatEventMaker $by = null)
   {
     $q->whereDoesntHave(
       'conversation',
-      fn ($q) =>
+      fn($q) =>
       $q->whereHas(
         'chatEvents',
-        fn ($q) =>
+        fn($q) =>
         $q->whereType('delete')
           ->whereColumn('created_at', '>', 'messages.created_at')
-          ->where(fn ($q) => $q->where('all', true)->when($by, fn ($q) => $q->orWhere('maker_id', $by->id)))
+          ->where(fn($q) => $q->where('all', true)->when($by, fn($q) => $q->orWhere('maker_id', $by->id)))
       )
     );
   }
@@ -210,7 +210,7 @@ class Message extends Model implements IMessage
     [$participantsCount, $deleteEventsCount] = [
       $this->conversation->participants()->count(),
       $this->chatEvents(false)->whereType('delete')
-        ->when($maker_id, fn ($q) => $q->where('maker_id', '!=', $maker_id))
+        ->when($maker_id, fn($q) => $q->where('maker_id', '!=', $maker_id))
         ->count()
     ];
     return $deleteEventsCount == $participantsCount - 1;
@@ -221,7 +221,7 @@ class Message extends Model implements IMessage
    *
    * @param IChatEventMaker $user
    * @param bool $all
-   * @return Myckhel\ChatSystem\Models\ChatEvent
+   * @return Binkode\ChatSystem\Models\ChatEvent
    */
   function makeDelete(IChatEventMaker $user, $all = false)
   {
@@ -232,7 +232,7 @@ class Message extends Model implements IMessage
    * create a chatEvent of type `read` for the `message` through the given `user`
    *
    * @param IChatEventMaker $user
-   * @return Myckhel\ChatSystem\Models\ChatEvent
+   * @return Binkode\ChatSystem\Models\ChatEvent
    */
   function makeRead(IChatEventMaker $user)
   {
@@ -243,7 +243,7 @@ class Message extends Model implements IMessage
    * create a chatEvent of type `deliver` for the `message` through the given `user`
    *
    * @param IChatEventMaker $user
-   * @return Myckhel\ChatSystem\Models\ChatEvent
+   * @return Binkode\ChatSystem\Models\ChatEvent
    */
   function makeDeliver(IChatEventMaker $user)
   {
@@ -256,7 +256,7 @@ class Message extends Model implements IMessage
    * @param IChatEventMaker $user
    * @param string $type
    * @param bool $all
-   * @return Myckhel\ChatSystem\Models\ChatEvent
+   * @return Binkode\ChatSystem\Models\ChatEvent
    */
   private function makeChatEvent(IChatEventMaker $user, $type = 'read', $all = false)
   {
@@ -274,15 +274,15 @@ class Message extends Model implements IMessage
    * Query participants of the conversation the message belongs to.
    *
    * @param IChatEventMaker $user
-   * @return Myckhel\ChatSystem\Models\ChatEvent
+   * @return Binkode\ChatSystem\Models\ChatEvent
    */
   public function participants(IChatEventMaker|int $user = null)
   {
     $user_id = $user->id ?? $user ?? null;
     return Config::config('models.conversation_user')::whereHas(
       'conversation',
-      fn ($q) =>
-      $q->whereId($this->conversation_id)->whereHas('participants', fn ($q) => $q->when($user_id, fn ($q) => $q->whereUserId($user_id)))
+      fn($q) =>
+      $q->whereId($this->conversation_id)->whereHas('participants', fn($q) => $q->when($user_id, fn($q) => $q->whereUserId($user_id)))
     );
   }
 
@@ -305,7 +305,7 @@ class Message extends Model implements IMessage
   function chatEvents(bool $distinctType = true): MorphMany
   {
     return $this->morphMany(Config::config('models.chat_event'), 'made')
-      ->when($distinctType, fn ($q) => $q->distinct('type'))
+      ->when($distinctType, fn($q) => $q->distinct('type'))
       ->latest();
   }
 
@@ -392,7 +392,7 @@ class MessageCollection extends Collection
    */
   private function makeChatEvent(IChatEventMaker $user, $type = 'read', $all = false)
   {
-    $create = $this->map(fn ($msg) => [
+    $create = $this->map(fn($msg) => [
       'made_id'    => $msg->id,
       'made_type'  => $msg::class,
       'type'       => 'delete',

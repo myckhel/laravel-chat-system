@@ -1,12 +1,12 @@
 <?php
 
-namespace Myckhel\ChatSystem\Models;
+namespace Binkode\ChatSystem\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Myckhel\ChatSystem\Database\Factories\ConversationUserFactory;
-use Myckhel\ChatSystem\Config;
-use Myckhel\ChatSystem\Contracts\IConversationUser;
+use Binkode\ChatSystem\Database\Factories\ConversationUserFactory;
+use Binkode\ChatSystem\Config;
+use Binkode\ChatSystem\Contracts\IConversationUser;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ConversationUser extends Model implements IConversationUser

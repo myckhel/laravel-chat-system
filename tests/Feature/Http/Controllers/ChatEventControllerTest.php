@@ -1,6 +1,6 @@
 <?php
 
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Config;
 
 beforeEach(function () {
   $this->user = auth()->user();

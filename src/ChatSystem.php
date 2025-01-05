@@ -1,9 +1,9 @@
 <?php
 
-namespace Myckhel\ChatSystem;
+namespace Binkode\ChatSystem;
 
 use Illuminate\Support\Facades\Gate;
-use Myckhel\ChatSystem\Config;
+use Binkode\ChatSystem\Config;
 use Laravel\Octane\Facades\Octane;
 
 class ChatSystem
@@ -16,7 +16,7 @@ class ChatSystem
   {
     Gate::guessPolicyNamesUsing(function ($modelClass) {
       $spilts = explode('\\', $modelClass);
-      return 'Myckhel\\ChatSystem\\Policies\\' . array_pop($spilts) . 'Policy';
+      return 'Binkode\\ChatSystem\\Policies\\' . array_pop($spilts) . 'Policy';
     });
   }
 
@@ -60,7 +60,7 @@ class ChatSystem
     if (config('octane.server') === 'swoole') {
       return Octane::concurrently($calls);
     } else {
-      return Collect($calls)->map(fn ($call) => $call());
+      return Collect($calls)->map(fn($call) => $call());
     }
   }
 }

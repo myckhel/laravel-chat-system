@@ -1,7 +1,9 @@
 <?php
-namespace Myckhel\ChatSystem\Contracts;
+
+namespace Binkode\ChatSystem\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
+
 /**
  *
  */
